@@ -4,7 +4,6 @@ import HeroSection from "@/components/home/HeroSection";
 import Promotion from "@/components/home/Promotion/Promotion";
 
 export default async function Home() {
-
 	return (
 		<div>
 			<HeroSection />

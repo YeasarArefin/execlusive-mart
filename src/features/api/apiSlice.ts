@@ -65,7 +65,7 @@ export const apiSlice = createApi({
         }),
         payment: builder.mutation({
             query: (data) => ({
-                url: '/payment',
+                url: 'http://localhost:8080/ssl-payment',
                 method: 'POST',
                 body: data
             })

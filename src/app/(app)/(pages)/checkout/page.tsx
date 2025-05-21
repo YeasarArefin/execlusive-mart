@@ -5,17 +5,21 @@ import { Button } from '@/components/ui/button';
 import { usePaymentMutation } from '@/features/api/apiSlice';
 import { useAppSelector } from '@/lib/hooks/hooks';
 import { PaymentData, User } from '@/types/types';
+import axios from 'axios';
+import { Building2, Mail, MapPinHouse, Phone, Signpost, User as UserIcon } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 export default function Page() {
 
+    const [loading, setLoading] = useState(false);
     const cart = useAppSelector((state) => state.cart.cart);
     const products = cart.map(({ _id, cartQuantity }) => ({ _id, quantity: cartQuantity }));
     const { data: session } = useSession();
     const user = session?.user as User;
-
+    const router = useRouter();
 
     const { register, handleSubmit } = useForm<PaymentData>({
         defaultValues: {
@@ -26,14 +30,24 @@ export default function Page() {
         },
     });
     const [payment, { data: response, isLoading, isError, isSuccess, error }] = usePaymentMutation();
-    const onSubmit = (data) => {
-        const paymentData = { name: user?.name, email: user?.email, ...data, products };
-        payment(paymentData);
+    const onSubmit = async (form: PaymentData) => {
+        setLoading(true);
+        try {
+            const res = await axios.post("/api/payment/request");
+            if (res.data) {
+                const paymentUrl = res.data.url;
+                window.location.href = paymentUrl;
+                console.log("Payment URL:", res.data);
+            } else {
+                alert("Payment initialization failed: " + res.data.message);
+            }
+        } catch (err: any) {
+            console.error(err);
+            alert("An error occurred. Check console.");
+        } finally {
+            setLoading(false);
+        }
     };
-
-    useEffect(() => {
-        console.log(response);
-    }, [isSuccess, response]);
 
     return (
         <div>
@@ -41,19 +55,39 @@ export default function Page() {
                 <Heading name='Checkout' title='Proceed to pay' />
             </div>
             <div className="">
+
                 <form onSubmit={handleSubmit(onSubmit)} className='grid grid-cols-1 md:grid-cols-5'>
                     <div className='w-full md:w-3/4 flex flex-col col-span-3 gap-3 mt-10'>
-                        <input className='w-full border px-4 py-1 rounded-md  outline-primary_red' value={user?.name || ""} />
-                        <input className='w-full border px-4 py-1 rounded-md  outline-primary_red' value={user?.email || ""} />
-                        <input className='w-full border px-4 py-1 rounded-md  outline-primary_red' {...register('address')} />
-                        <input className='w-full border px-4 py-1 rounded-md  outline-primary_red' {...register('city')} />
-                        <input className='w-full border px-4 py-1 rounded-md  outline-primary_red' {...register('phone')} />
-                        <input className='w-full border px-4 py-1 rounded-md  outline-primary_red' {...register('postCode')} />
+                        <div className='relative'>
+                            <UserIcon className='absolute top-2 left-3' />
+                            <input className='w-full border pl-12 px-4 py-2 rounded-md  outline-primary_red' value={user?.name} defaultValue={""} placeholder='Name' />
+                        </div>
+                        <div className='relative'>
+                            <Mail className='absolute top-2 left-3' />
+                            <input className='w-full border pl-12 px-4 py-2 rounded-md  outline-primary_red' value={user?.email} defaultValue={""} placeholder='Email' />
+                        </div>
+                        <div className='relative'>
+                            <MapPinHouse className='absolute top-2 left-3' />
+                            <input className='w-full border pl-12 px-4 py-2 rounded-md  outline-primary_red' placeholder='Address' {...register('address')} />
+                        </div>
+                        <div className='relative'>
+                            <Building2 className='absolute top-2 left-3' />
+                            <input className='w-full border pl-12 px-4 py-2 rounded-md  outline-primary_red' placeholder='City' {...register('city')} />
+                        </div>
+                        <div className='relative'>
+                            <Phone className='absolute top-2 left-3' />
+                            <input className='w-full border pl-12 px-4 py-2 rounded-md  outline-primary_red' placeholder='Phone Number '{...register('phone')} />
+                        </div>
+                        <div className='relative'>
+                            <Signpost className='absolute top-2 left-3' />
+                            <input className='w-full border pl-12 px-4 py-2 rounded-md  outline-primary_red' placeholder='Post Code' {...register('postCode')} />
+                        </div>
                     </div>
                     <div className='col-span-2 border rounded-lg'>
                         <CartCalculation />
                         <div className='px-5 pt-3 pb-5'>
-                            <Button type="submit" className='w-full'>Proceed to Pay</Button>
+                            <Button type="submit"
+                                disabled={loading} className='w-full'> {loading ? "Redirecting…" : "Proceed to Pay"}</Button>
                         </div>
                     </div>
                 </form>

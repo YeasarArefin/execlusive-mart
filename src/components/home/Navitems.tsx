@@ -20,7 +20,7 @@ import { useEffect, useState } from "react";
 import LetterAvatar from 'react-avatar';
 import { CiSearch } from "react-icons/ci";
 import { IoMdHeartEmpty } from "react-icons/io";
-import { IoCartOutline } from "react-icons/io5";
+import { IoCartOutline, IoShieldOutline } from "react-icons/io5";
 import { PiSignOut } from "react-icons/pi";
 import { Button } from "../ui/button";
 import NotifyBadge from "../ui/notify-badge";
@@ -91,9 +91,15 @@ export default function NavItems({ links }: { links: Link[]; }) {
                             <IoCartOutline className="text-2xl" />
                             <span>Cart</span>
                         </DropdownMenuItem>
+                        <DropdownMenuItem className="gap-x-2">
+                            <IoShieldOutline className="text-2xl" />
+                            <Link href='/admin/dashboard'>
+                                <span>Dashboard</span>
+                            </Link>
+                        </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem className="gap-x-2" onClick={() => signOut()}>
-                            <PiSignOut className="text-2xl" />
+                            <PiSignOut className="text-xl" />
                             <span>Sign Out</span>
                         </DropdownMenuItem>
                     </DropdownMenuGroup>

@@ -1,22 +1,56 @@
 import { ObjectId } from "mongoose";
 
+// export type Product = {
+//     _id: string,
+//     cartId?: string,
+//     name: string,
+//     description: string,
+//     images: string[];
+//     price: number,
+//     discount: number,
+//     rating: number,
+//     reviews: [],
+//     stocks: number,
+//     featured: boolean,
+//     brand: string,
+//     cartQuantity: number,
+//     category: ObjectId,
+//     colors: string[],
+//     size: string[];
+// };
+export type ProductVariant = {
+    size: string;       // e.g., "8/128GB"
+    price: number;
+    stocks: number;
+};
+
+export type ColorType = {
+    _id: string;
+    color_name: string;
+    color_code: string;
+    inStock: boolean;
+};
+
+export type ProductImageType = {
+    _id: string;
+    color_name: string;
+    image: string;
+};
+
 export type Product = {
     _id: string,
+    type: 'phone' | 'laptop' | 'accessory',
     cartId?: string,
     name: string,
     description: string,
-    images: string[];
-    price: number,
+    images: ProductImageType[];
     discount: number,
-    rating: number,
-    reviews: [],
-    stocks: number,
     featured: boolean,
     brand: string,
     cartQuantity: number,
     category: ObjectId,
-    colors: string[],
-    size: string[];
+    variants: ProductVariant[],
+    colors: ColorType[],
 };
 
 export type Category = {
@@ -88,6 +122,7 @@ export type QueryObject = {
     name: Object,
     brand: Object,
     category: Object,
+    type: Object;
 };
 
 export type PaymentOfProduct = {
@@ -123,3 +158,15 @@ export type SSLResponse = {
     desc: {}[];
     is_direct_pay_enable: string;
 };
+
+export interface UsePaginationProps {
+    itemsPerPage: number;
+    currentPage: number;
+    handleItemPerPageChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+    handlePreviousPage: () => void;
+    handleNextPage: () => void;
+    setCurrentPage: (page: number) => void;
+    pages: number[];
+    setItemsPerPage: (n: number) => void;
+    totalItems: number;
+}

@@ -28,6 +28,7 @@ export async function GET(request: NextRequest) {
         const category = searchParams.get('category');
         const brand = searchParams.get('brand');
         const name = searchParams.get('name');
+        const type = searchParams.get('type');
         const productsCount = await ProductModel.estimatedDocumentCount();
         const skip = (page - 1) * limit;
 
@@ -45,7 +46,11 @@ export async function GET(request: NextRequest) {
         // Brand filter (support for multiple brands)
         if (brand) {
             const brandArray = brand.split(','); // Split the brand string into an array
-            queryObject.brand = { $in: brandArray };
+            queryObject.brand = { $in: brandArray, };
+        }
+
+        if (type && type !== 'all') {
+            queryObject.type = { $regex: type, $options: "i" };
         }
 
         // Category filter (support for multiple categories)

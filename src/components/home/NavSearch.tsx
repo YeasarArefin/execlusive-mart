@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useDebounceCallback } from 'usehooks-ts';
 import { Input } from '../ui/input';
+
 export default function NavSearch() {
     const [productName, setProductName] = useState<string>('');
     const [productInput, setProductInput] = useState<string>('');

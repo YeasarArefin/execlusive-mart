@@ -1,12 +1,12 @@
 'use client';
 import Product from "@/components/home/Explore/Product";
 import ProductLoader from "@/components/product/ProductLoader";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import Pagination from "@/components/ui/pagination";
 import { useGetProductsCountQuery, useGetProductsQuery } from "@/features/api/apiSlice";
-import { cn } from "@/lib/utils";
+import usePagination from "@/hooks/usePagination";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { LuSearch } from "react-icons/lu";
 import { useDebounceCallback } from 'usehooks-ts';
 
@@ -17,33 +17,9 @@ export default function Page() {
     const [name, setName] = useState<string>('');
     const searchParams = useSearchParams();
 
-    // pagination
     const { data: pdCount } = useGetProductsCountQuery({});
     const productCount = pdCount?.data || 0;
-
-    const [itemsPerPage, setItemsPerPage] = useState(10);
-    const [currentPage, setCurrentPage] = useState(1);
-    const numberOfPages = Math.ceil(productCount / itemsPerPage) || 0;
-    // @ts-ignore
-    const pages = [...Array(numberOfPages).keys()];
-
-    const handleItemPerPageChange = (e: ChangeEvent<HTMLSelectElement>) => {
-        const value = parseInt(e.target.value);
-        setItemsPerPage(value);
-        setCurrentPage(1);
-    };
-
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage((currentPage) => currentPage - 1);
-        }
-    };
-
-    const handleNextPage = () => {
-        if (currentPage < pages.length) {
-            setCurrentPage((currentPage) => currentPage + 1);
-        }
-    };
+    const { currentPage, handleItemPerPageChange, handleNextPage, handlePreviousPage, itemsPerPage, pages, setCurrentPage, setItemsPerPage } = usePagination({ totalItems: productCount });
 
 
     // filtering
@@ -82,7 +58,7 @@ export default function Page() {
         if (categoryQuery) setCategoryFilters(categoryQuery.split(','));
         if (page) setCurrentPage(parseInt(page));
         if (limit) setItemsPerPage(parseInt(limit));
-    }, [searchParams]);
+    }, [searchParams, setCurrentPage, setItemsPerPage]);
 
     const brandQuery = brandFilters.length > 0 ? `brand=${brandFilters.join(',')}&` : '';
     const categoryQuery = categoryFilters.length > 0 ? `category=${categoryFilters.join(',')}&` : '';
@@ -116,29 +92,8 @@ export default function Page() {
             {isSuccess && <div className="flex justify-center my-20">
                 <div className="flex flex-col">
                     <h1 className="text-center mb-5">Current Page : <span className="text-primary_red font-semibold">{currentPage}</span></h1>
-                    <div className="flex gap-x-2">
-                        <Button onClick={handlePreviousPage} className="bg-primary_red hover:bg-primary_red">Prev</Button>
-                        {
-                            pages.map(page => {
-                                const correctPage = page + 1;
-                                return (
-                                    <Button
-                                        key={correctPage}
-                                        onClick={() => setCurrentPage(correctPage)}
-                                        className={cn("bg-white hover:bg-primary_red hover:text-white text-primary_red border border-primary_red font-semibold", "", { "bg-primary_red text-white": correctPage === currentPage })}>{correctPage}
-                                    </Button>
-                                );
-                            })
-                        }
-                        <Button onClick={handleNextPage} className="bg-primary_red hover:bg-primary_red">Next</Button>
 
-                        <select value={itemsPerPage} onChange={handleItemPerPageChange} className="border-2 rounded-md bg-primary_red border-primary_red text-white outline-none ">
-                            <option value="10">10</option>
-                            <option value="20">20</option>
-                            <option value="30">30</option>
-                            <option value={productCount}>All</option>
-                        </select>
-                    </div>
+                    <Pagination totalItems={productCount} currentPage={currentPage} handleItemPerPageChange={handleItemPerPageChange} handleNextPage={handleNextPage} handlePreviousPage={handlePreviousPage} itemsPerPage={itemsPerPage} pages={pages} setCurrentPage={setCurrentPage} setItemsPerPage={setItemsPerPage} />
 
                 </div>
             </div>}
@@ -165,7 +120,7 @@ export default function Page() {
                         <div>
                             <div>Brands</div>
                             <div>
-                                <div><input type="checkbox" className="mr-2" onChange={handleBrandBox} name="apple" checked={brandFilters.includes('apple')} />Apple</div>
+                                <div><input type="checkbox" className="mr-2" onChange={handleBrandBox} name="Apple" checked={brandFilters.includes('Apple')} />Apple</div>
                                 <div><input type="checkbox" className="mr-2" onChange={handleBrandBox} name="zotac" checked={brandFilters.includes('zotac')} />Zotac</div>
                                 <div><input type="checkbox" className="mr-2" onChange={handleBrandBox} name="amd" checked={brandFilters.includes('amd')} />Amd</div>
                                 <div><input type="checkbox" className="mr-2" onChange={handleBrandBox} name="intel" checked={brandFilters.includes('intel')} />Intel</div>

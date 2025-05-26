@@ -10,7 +10,7 @@ if (process.env.NODE_ENV === 'production') {
 
 const nextConfig = {
     images: {
-        domains: ['adminapi.applegadgetsbd.com']
+        domains: ['adminapi.applegadgetsbd.com', 'fdn2.gsmarena.com']
     },
     async headers() {
         return [

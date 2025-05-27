@@ -10,7 +10,7 @@ import ListView from "@/components/(admin)/products/ListView";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Pagination from "@/components/ui/pagination";
-import { useGetProductsCountQuery, useGetProductsQuery } from "@/features/api/apiSlice";
+import { useGetProductsCountQuery } from "@/features/api/apiSlice";
 import usePagination from "@/hooks/usePagination";
 import { Product as ProductType } from "@/types/types";
 
@@ -29,9 +29,11 @@ export default function ProductsPage() {
 
 
     const [query, setQuery] = useState(`limit=${itemsPerPage}&type=${filterType}&page=${currentPage}&limit=${itemsPerPage}`);
-    const { data: response, isError, isLoading, isSuccess, refetch } = useGetProductsQuery(query, {});
-    const products = response?.data as ProductType[];
-
+    // const { data: response, isError, isLoading, isSuccess, refetch } = useGetProductsQuery(query, {});
+    // const products = response?.data as ProductType[] || [];
+    const products = [] as ProductType[]; // Placeholder for products, replace with actual data fetching logic
+    const isLoading = false; // Placeholder for loading state, replace with actual loading logic
+    const isSuccess = false; // Placeholder for loading state, replace with actual loading logic
 
     // changing the query whenever the currentPage, filterType, or itemsPerPage changes
     useEffect(() => {
@@ -53,7 +55,7 @@ export default function ProductsPage() {
     const clearFilters = () => {
         let newQuery = `limit=${itemsPerPage}&type=${filterType}&page=${currentPage}`;
         setQuery(newQuery);
-        refetch();
+        // refetch();
         setSearchTerm("");
     };
 

@@ -9,7 +9,7 @@ import Image from 'next/image';
 export default function GridView({ products, getTypeColor }: { products: Product[], getTypeColor: (type: string) => string; }) {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {products.map((product) => (
+            {products && products?.map((product) => (
                 <Card
                     key={product._id}
                     className="overflow-hidden border-gray-200 hover:shadow-lg transition-shadow duration-200"
@@ -17,8 +17,8 @@ export default function GridView({ products, getTypeColor }: { products: Product
                     <div className="relative h-48 bg-gray-50">
                         {product.images && product.images.length > 0 ? (
                             <Image
-                                src={product.images[0].image || "/placeholder.svg"}
-                                alt={product.name}
+                                src={product?.images[0]?.image || "/placeholder.svg"}
+                                alt={product?.name}
                                 fill
                                 className="object-cover"
                             />

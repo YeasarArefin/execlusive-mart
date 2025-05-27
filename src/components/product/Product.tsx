@@ -19,9 +19,9 @@ import AddToCart from '../home/Explore/AddToCart';
 export default function Product({ product }: { product: ProductType; }) {
     const { _id, images, brand, name, category, description, discount, cartQuantity, colors, variants, type } = product || {};
     const [productQuantity, setProductQuantity] = useState(1);
-    const [selectedColor, setSelectedColor] = useState<ColorType>(colors[0]);
+    const [selectedColor, setSelectedColor] = useState<ColorType>(colors[0] || {});
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-    const [selectedVariant, setSelectedVariant] = useState<ProductVariant>(variants[0]);
+    const [selectedVariant, setSelectedVariant] = useState<ProductVariant>(variants[0] || {});
 
     const handleChangeImageIndex = (index) => {
         setSelectedImageIndex(index);
@@ -31,7 +31,7 @@ export default function Product({ product }: { product: ProductType; }) {
         window.history.pushState(
             null,
             "",
-            `?color=${selectedColor.color_name}&size=${selectedVariant.size}`
+            `?color=${selectedColor?.color_name}&size=${selectedVariant?.size}`
         );
     }, [selectedColor, selectedVariant]);
 
@@ -44,15 +44,15 @@ export default function Product({ product }: { product: ProductType; }) {
                         <div className="flex lg:flex-col order-2 lg:order-1 gap-2 overflow-x-auto lg:overflow-visible p-2 lg:p-4">
                             {images?.map((image, idx) => (
                                 <div
-                                    key={image._id}
+                                    key={image?._id}
                                     className={`min-w-[60px] sm:min-w-[80px] w-[60px] sm:w-[80px] h-[60px] sm:h-[80px] lg:w-[100px] lg:h-[100px] rounded-md cursor-pointer bg-slate-100 p-2 flex-shrink-0 ${selectedImageIndex === idx ? "border-2 border-red-500" : ""
                                         }`}
                                     onClick={() => handleChangeImageIndex(idx)}
                                 >
                                     <div className="relative w-full h-full">
                                         <Image
-                                            src={image.image}
-                                            alt={image.color_name || `Product image ${idx + 1}`}
+                                            src={image?.image}
+                                            alt={image?.color_name || `Product image ${idx + 1}`}
                                             className="rounded-md object-cover"
                                             fill
                                         />

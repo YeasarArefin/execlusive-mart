@@ -20,7 +20,7 @@ export default function CartQuantityController({ cartId, cartQuantity }: { cartI
 	};
 
 	const handelDecreaseCartQuantity = () => {
-		const productQuantity = cart.filter((pd) => pd.cartId === cartId)[0].cartQuantity;
+		const productQuantity = cart.filter((pd) => pd.cartId === cartId)[0]?.cartQuantity;
 		if (productQuantity > 1) {
 			dispatch(decreaseCart(cartId));
 			addToCartApi({ userId, cartId, quantity: 1, mode: 'decrease' });

@@ -124,8 +124,8 @@ export default function CartCalculation() {
     for (let i = 0; i < cart.length; i++) {
         const product = cart[i];
         // Use the first variant in the array (selected variant)
-        const variant = product.variants && product.variants[0];
-        const price = (variant?.price ?? 0) * (product.cartQuantity ?? 1);
+        const variant = product?.variants && product?.variants[0];
+        const price = (variant?.price ?? 0) * (product?.cartQuantity ?? 1);
         subTotal += price;
     }
 

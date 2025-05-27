@@ -20,7 +20,7 @@ export default async function Products() {
         content = <Error>{message}</Error>;
     }
     if (success) {
-        content = products.map((product) => <Product key={product._id} product={product} />);
+        content = products?.map((product) => <Product key={product?._id} product={product} />);
     }
 
     return (

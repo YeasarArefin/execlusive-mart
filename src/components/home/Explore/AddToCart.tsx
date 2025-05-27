@@ -22,9 +22,9 @@ export default function AddToCart({ product, color, variant, quantity = 1 }: { p
 		const cartId = uuid();
 
 		// Select default color and variant (first in array)
-		const selectedColor: ColorType = color || product.colors[0];
-		const selectedVariant: ProductVariant = variant || product.variants[0];
-		const selectedImage = product.images.filter(img => img.color_name === selectedColor.color_name);
+		const selectedColor: ColorType = color || product?.colors[0];
+		const selectedVariant: ProductVariant = variant || product?.variants[0];
+		const selectedImage = product?.images.filter(img => img?.color_name === selectedColor?.color_name);
 
 
 		// Prepare newProduct for cart (store selected color and variant as arrays for compatibility)

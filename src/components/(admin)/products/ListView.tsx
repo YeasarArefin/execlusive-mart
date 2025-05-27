@@ -26,14 +26,14 @@ export default function ListView({ products, getTypeColor }: { products: Product
                             </tr>
                         </thead>
                         <tbody>
-                            {products.map((product) => (
+                            {products && products?.map((product) => (
                                 <tr key={product._id} className="border-b border-gray-100 hover:bg-gray-50">
                                     <td className="p-4">
                                         <div className="flex items-center gap-3">
                                             <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden">
                                                 {product.images && product.images.length > 0 ? (
                                                     <Image
-                                                        src={product.images[0].image || "/placeholder.svg"}
+                                                        src={product?.images[0]?.image || "/placeholder.svg"}
                                                         alt={product.name}
                                                         width={48}
                                                         height={48}

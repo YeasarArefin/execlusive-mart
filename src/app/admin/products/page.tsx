@@ -104,7 +104,7 @@ export default function ProductsPage() {
                         <div className="flex items-center justify-between">
                             <div>
                                 <p className="text-sm text-gray-600">Total Products</p>
-                                <p className="text-2xl font-bold text-black">{products.length}</p>
+                                <p className="text-2xl font-bold text-black">{products?.length}</p>
                             </div>
                             <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                         </div>
@@ -115,7 +115,7 @@ export default function ProductsPage() {
                         <div className="flex items-center justify-between">
                             <div>
                                 <p className="text-sm text-gray-600">Featured</p>
-                                <p className="text-2xl font-bold text-black">{products.filter((p) => p.featured).length}</p>
+                                <p className="text-2xl font-bold text-black">{products?.filter((p) => p.featured).length}</p>
                             </div>
                             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                         </div>
@@ -126,7 +126,7 @@ export default function ProductsPage() {
                         <div className="flex items-center justify-between">
                             <div>
                                 <p className="text-sm text-gray-600">On Discount</p>
-                                <p className="text-2xl font-bold text-black">{products.filter((p) => p.discount > 0).length}</p>
+                                <p className="text-2xl font-bold text-black">{products?.filter((p) => p.discount > 0).length}</p>
                             </div>
                             <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
                         </div>

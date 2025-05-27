@@ -1,14 +1,9 @@
 'use client';
-import { useAddToCartApiMutation } from '@/features/api/apiSlice';
-import { addToCart } from '@/features/cart/cartSlice';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks/hooks';
 import { ColorType, Product as ProductType, ProductVariant } from '@/types/types';
-import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import InnerImageZoom from 'react-inner-image-zoom';
 import 'react-inner-image-zoom/lib/styles.min.css';
-import { v4 as uuid } from 'uuid';
 import ToggleWishlist from '../home/Explore/ToggleWishlist';
 import { Button } from '../ui/button';
 import ProductQuantityController from './product-quantity-controller';
@@ -19,48 +14,14 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
+import AddToCart from '../home/Explore/AddToCart';
 
 export default function Product({ product }: { product: ProductType; }) {
     const { _id, images, brand, name, category, description, discount, cartQuantity, colors, variants, type } = product || {};
     const [productQuantity, setProductQuantity] = useState(1);
-    const [addToCartApi, { isError, isLoading, isSuccess, data }] = useAddToCartApiMutation();
-
-    // Use the first color and variant as default selections
     const [selectedColor, setSelectedColor] = useState<ColorType>(colors[0]);
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const [selectedVariant, setSelectedVariant] = useState<ProductVariant>(variants[0]);
-
-    const cart = useAppSelector(state => state.cart.cart) || [];
-    const dispatch = useAppDispatch();
-
-    const { data: session } = useSession();
-    const userId = session?.user._id;
-
-    const handleAddToCart = () => {
-        const cartId = uuid();
-
-        // Prepare newProduct for cart (store selected color and variant as arrays for compatibility)
-        const newProduct: ProductType = {
-            ...product,
-            cartId,
-            colors: [selectedColor],
-            variants: [selectedVariant],
-            cartQuantity: productQuantity,
-        };
-
-        dispatch(addToCart({ product: newProduct, quantity: productQuantity }));
-
-        // Update cart in DB
-        addToCartApi({
-            userId,
-            productId: _id,
-            cartId,
-            quantity: productQuantity,
-            color: selectedColor,
-            variant: selectedVariant,
-            mode: 'add'
-        });
-    };
 
     const handleChangeImageIndex = (index) => {
         setSelectedImageIndex(index);
@@ -166,7 +127,7 @@ export default function Product({ product }: { product: ProductType; }) {
                                 <ProductQuantityController productQuantity={productQuantity} setProductQuantity={setProductQuantity} />
                             </div>
                             <div className="flex gap-x-5 items-center">
-                                <Button onClick={handleAddToCart} className="bg-primary_red w-full sm:w-auto">Add To Cart</Button>
+                                <AddToCart product={product} color={selectedColor} variant={selectedVariant} quantity={productQuantity} />
                                 <ToggleWishlist _id={_id || ''} icon="heart" />
                             </div>
                         </div>

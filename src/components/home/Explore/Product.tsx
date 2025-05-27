@@ -19,7 +19,7 @@ export default function Product({ product }: { product: ProductType; }) {
                     {/* <Rating rating={rating} />
                     <h1>({reviews.length})</h1> */}
                 </div>
-                <AddToCart _id={_id || ''} product={product} icon="cart" className="absolute top-28" />
+                <AddToCart product={product} icon="cart" className="absolute top-28" />
             </div>
         </div>
     );

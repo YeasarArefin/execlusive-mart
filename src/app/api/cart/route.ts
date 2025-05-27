@@ -1,10 +1,9 @@
-import { compareProducts } from "@/lib/compareProducts";
 import dbConnect from "@/lib/dbConnect";
 import sendResponse from "@/lib/sendResponse";
 import ProductModel from "@/models/Product";
 import UserModel from "@/models/User";
 import { Product } from "@/types/types";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 interface Request {
     userId: string,
@@ -12,15 +11,15 @@ interface Request {
     productId: string,
     quantity: number,
     mode: 'add' | 'increase' | 'decrease' | 'remove';
-    size: string,
-    color: string,
+    variant: { size: string, price: number, _id: string, stocks: number; },
+    color: { _id: string, color_name: string, color_code: string, inStock: boolean; },
     product: Product;
 }
 
 export async function POST(request: NextRequest) {
     dbConnect();
     try {
-        const { userId, productId, cartId, quantity, size, color, mode, product } = await request.json() as Request;
+        const { userId, productId, cartId, quantity, variant, color, mode, product } = await request.json() as Request;
 
         let user = await UserModel.findById(userId);
         if (!user) return sendResponse(false, 'User not found', 404);
@@ -29,34 +28,46 @@ export async function POST(request: NextRequest) {
         let response;
 
         if (mode === 'add') {
-            const productToAdd = await ProductModel.findById(productId).lean();
-            if (!productToAdd) return sendResponse(false, 'Product not found', 404);
-
-            productToAdd.colors = [color];
-            productToAdd.size = [size];
-            productToAdd.cartId = cartId;
-            productToAdd.cartQuantity = quantity;
-
-            let existingIndex = -1;
-            for (let i = 0; i < user.cart.length; i++) {
-                const existingProduct = user.cart[i];
-                console.log("🚀 ~ POST ~ existingProduct:", existingProduct);
-                console.log("🚀 ~ POST ~ productToAdd:", productToAdd);
-                const isSame = compareProducts(existingProduct, productToAdd);
-                if (isSame) {
-                    existingIndex = i;
-                    break;
-                }
+            const product = await ProductModel.findById(productId).lean();
+            if (!product) {
+                return NextResponse.json({ success: false, message: 'Product not found' }, { status: 404 });
             }
 
-            if (existingIndex > -1) {
-                user.cart[existingIndex].cartQuantity += quantity;
+            const selectedVariant = product.variants.find(v => v.size === variant.size);
+            const selectedColor = product.colors.find(c => c.color_name === color.color_name);
+
+            if (!selectedVariant || !selectedColor) {
+                return NextResponse.json({ success: false, message: 'Invalid size or color selected' }, { status: 400 });
+            }
+
+            const existingCartItem = user.cart.find((item: any) => item.cartId === cartId);
+
+            if (existingCartItem) {
+                existingCartItem.cartQuantity += quantity;
+                response = 'Quantity updated';
             } else {
-                user.cart.push(productToAdd);
+                const cartItem = {
+                    _id: product._id,
+                    type: product.type,
+                    cartId,
+                    name: product.name,
+                    description: product.description,
+                    discount: product.discount,
+                    featured: product.featured,
+                    brand: product.brand,
+                    cartQuantity: quantity,
+                    category: product.category,
+                    variants: [selectedVariant],
+                    colors: [selectedColor],
+                    images: product.images.filter(img => img.color_name === color.color_name),
+                };
+
+                user.cart.push(cartItem);
+                response = 'Added to cart';
             }
 
-            response = (existingIndex > -1 ? 'Product quantity updated successfully' : 'Added to Cart successfully');
-
+            await user.save();
+            return NextResponse.json({ success: true, message: response, cart: user.cart });
         } else if (mode === 'increase') {
 
             user.cart[existingSameProductIndex].cartQuantity += quantity;
@@ -82,6 +93,8 @@ export async function POST(request: NextRequest) {
         return sendResponse(false, 'Failed to update user cart', 400, error);
     }
 }
+
+
 
 export async function GET(request: NextRequest) {
     dbConnect();

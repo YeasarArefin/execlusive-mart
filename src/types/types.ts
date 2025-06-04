@@ -1,44 +1,28 @@
 import { ObjectId } from "mongoose";
 
-// export type Product = {
-//     _id: string,
-//     cartId?: string,
-//     name: string,
-//     description: string,
-//     images: string[];
-//     price: number,
-//     discount: number,
-//     rating: number,
-//     reviews: [],
-//     stocks: number,
-//     featured: boolean,
-//     brand: string,
-//     cartQuantity: number,
-//     category: ObjectId,
-//     colors: string[],
-//     size: string[];
-// };
+
 export type ProductVariant = {
+    _id?: string;
     size: string;       // e.g., "8/128GB"
     price: number;
     stocks: number;
 };
 
 export type ColorType = {
-    _id: string;
+    _id?: string;
     color_name: string;
     color_code: string;
     inStock: boolean;
 };
 
 export type ProductImageType = {
-    _id: string;
+    _id?: string;
     color_name: string;
     image: string;
 };
 
 export type Product = {
-    _id: string,
+    _id?: string,
     type: 'phone' | 'laptop' | 'accessory',
     cartId?: string,
     name: string,
@@ -48,7 +32,7 @@ export type Product = {
     featured: boolean,
     brand: string,
     cartQuantity: number,
-    category: ObjectId,
+    category: String,
     variants: ProductVariant[],
     colors: ColorType[],
 };
@@ -170,3 +154,12 @@ export interface UsePaginationProps {
     setItemsPerPage: (n: number) => void;
     totalItems: number;
 }
+
+export type Brand = {
+    _id?: string;
+    type: ('phone' | 'laptop' | 'accessory')[];
+    name: string;
+    image: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+};

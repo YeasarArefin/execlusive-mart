@@ -1,6 +1,5 @@
 import dbConnect from "@/lib/dbConnect";
 import sendResponse from "@/lib/sendResponse";
-import CategoryModel from "@/models/Category";
 import ProductModel from "@/models/Product";
 import { Product, QueryObject } from "@/types/types";
 import { NextRequest } from "next/server";
@@ -25,7 +24,6 @@ export async function GET(request: NextRequest) {
         const count = searchParams.get('count');
         const page = Number(searchParams.get('page')) || 1;
         const limit = Number(searchParams.get('limit')) || 10;
-        const category = searchParams.get('category');
         const brand = searchParams.get('brand');
         const name = searchParams.get('name');
         const type = searchParams.get('type');
@@ -54,27 +52,26 @@ export async function GET(request: NextRequest) {
         }
 
         // Category filter (support for multiple categories)
-        if (category) {
-            const categoryArray = category.split(','); // Split the category string into an array
+        // if (category) {
+        //     const categoryArray = category.split(','); // Split the category string into an array
 
-            // Fetch the ObjectIds for the categories
-            const categories = await CategoryModel.find({ name: { $in: categoryArray } }).select('_id');
-            const categoryIds = categories.map(cat => cat._id); // Get the ObjectIds of categories
+        //     // Fetch the ObjectIds for the categories
+        //     const categories = await CategoryModel.find({ name: { $in: categoryArray } }).select('_id');
+        //     const categoryIds = categories.map(cat => cat._id); // Get the ObjectIds of categories
 
-            // Add the category ObjectIds to the query
-            queryObject.category = { $in: categoryIds }; // Use $in to match any of the selected categories
-        }
+        //     // Add the category ObjectIds to the query
+        //     queryObject.category = { $in: categoryIds }; // Use $in to match any of the selected categories
+        // }
 
         // If a specific product ID is provided
         if (_id) {
-            const product = await ProductModel.findById(_id).populate('category', 'name image -_id');
+            const product = await ProductModel.findById(_id);
             if (product) return sendResponse(true, 'product sent successfully', 200, product);
             return sendResponse(false, 'product not found', 404);
         }
 
         // Fetch products with pagination, based on queryObject filters
         const products = await ProductModel.find(queryObject)
-            .populate('category', 'name image -_id')
             .skip(skip)
             .limit(limit);
 

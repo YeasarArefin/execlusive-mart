@@ -57,6 +57,7 @@ export default function SingleCart({ product }: { product: ProductType; }) {
                     width={80}
                     height={60}
                     alt="product_image"
+                    unoptimized
                 />
                 <div>
                     <Link href={`/products/${_id}`} className="text-lg hover:underline">

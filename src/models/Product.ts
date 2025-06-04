@@ -82,7 +82,6 @@
 
 import { Product, Review } from "@/types/types";
 import mongoose, { Schema } from "mongoose";
-import CategoryModel from "./Category";
 
 const ReviewSchema: Schema<Review> = new mongoose.Schema({
     user: {
@@ -113,11 +112,6 @@ export const ProductSchema: Schema<Product> = new mongoose.Schema({
             image: { type: String, required: true },
         }
     ],
-    category: {
-        type: Schema.Types.ObjectId,
-        ref: CategoryModel.modelName,
-        required: [true, 'category is required']
-    },
     brand: {
         type: String,
         required: [true, 'brand is required']

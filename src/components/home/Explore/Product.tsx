@@ -29,7 +29,7 @@ export default function Product({ product }: { product: ProductType; }) {
                 <div className="flex items-center gap-x-3">
                     {/* Ratings or reviews */}
                 </div>
-                <AddToCart product={product} icon="cart" className="absolute top-28" />
+                <AddToCart product={product} icon="cart" />
             </div>
         </div>
     );

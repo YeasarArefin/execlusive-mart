@@ -1,16 +1,16 @@
 "use client";
 
-import { Plus, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { AddProduct } from "@/components/(admin)/products/AddProduct";
 import AdminProductLoader from "@/components/(admin)/products/AdminProductLoader";
 import FilterAndSearch from "@/components/(admin)/products/FilterAndSearch";
 import GridView from "@/components/(admin)/products/GridView";
 import ListView from "@/components/(admin)/products/ListView";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Pagination from "@/components/ui/pagination";
-import { useGetProductsCountQuery } from "@/features/api/apiSlice";
+import { useGetProductsCountQuery, useGetProductsQuery } from "@/features/api/apiSlice";
 import usePagination from "@/hooks/usePagination";
 import { Product as ProductType } from "@/types/types";
 
@@ -29,11 +29,10 @@ export default function ProductsPage() {
 
 
     const [query, setQuery] = useState(`limit=${itemsPerPage}&type=${filterType}&page=${currentPage}&limit=${itemsPerPage}`);
-    // const { data: response, isError, isLoading, isSuccess, refetch } = useGetProductsQuery(query, {});
-    // const products = response?.data as ProductType[] || [];
-    const products = [] as ProductType[]; // Placeholder for products, replace with actual data fetching logic
-    const isLoading = false; // Placeholder for loading state, replace with actual loading logic
-    const isSuccess = false; // Placeholder for loading state, replace with actual loading logic
+    const { data: response, isError, isLoading, isSuccess, refetch } = useGetProductsQuery(query, {});
+    const products = response?.data as ProductType[] || [];
+
+
 
     // changing the query whenever the currentPage, filterType, or itemsPerPage changes
     useEffect(() => {
@@ -87,10 +86,8 @@ export default function ProductsPage() {
                     <h1 className="text-2xl font-bold text-black">Products</h1>
                     <p className="text-gray-600">Manage your product inventory</p>
                 </div>
-                <Button className="bg-red-600 hover:bg-red-700 text-white">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Product
-                </Button>
+                {/* Add Product Button */}
+                <AddProduct />
             </div>
 
             {/* Filters and Search */}

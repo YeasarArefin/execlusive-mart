@@ -18,7 +18,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import LetterAvatar from 'react-avatar';
-import { CiSearch } from "react-icons/ci";
 import { IoMdHeartEmpty } from "react-icons/io";
 import { IoCartOutline, IoShieldOutline } from "react-icons/io5";
 import { PiSignOut } from "react-icons/pi";
@@ -129,7 +128,6 @@ export default function NavItems({ links }: { links: Link[]; }) {
             <div className="hidden md:flex items-center gap-x-5">
                 <div className="flex relative">
                     <NavSearch />
-                    <CiSearch className="absolute right-2 top-2 text-lg" />
                 </div>
                 <Link href='/wishlists' className="relative">
                     <NotifyBadge>{wishlists.length}</NotifyBadge>

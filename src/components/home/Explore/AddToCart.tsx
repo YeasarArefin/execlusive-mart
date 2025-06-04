@@ -1,14 +1,16 @@
+import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useAddToCartApiMutation } from "@/features/api/apiSlice";
 import { addToCart } from "@/features/cart/cartSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks/hooks";
+import { cn } from "@/lib/utils";
 import { ColorType, Product, ProductVariant } from "@/types/types";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { IoCartOutline } from "react-icons/io5";
 import { v4 as uuid } from 'uuid';
 
-export default function AddToCart({ product, color, variant, quantity = 1 }: { product: Product, className?: string, icon?: "cart" | "cancel"; color?: ColorType, variant?: ProductVariant, quantity?: number; }) {
+export default function AddToCart({ product, color, variant, quantity = 1, className }: { product: Product, className?: string, icon?: "cart" | "cancel"; color?: ColorType, variant?: ProductVariant, quantity?: number; }) {
 
 	const cart = useAppSelector(state => state.cart.cart) || [];
 	const dispatch = useAppDispatch();
@@ -61,9 +63,16 @@ export default function AddToCart({ product, color, variant, quantity = 1 }: { p
 	}, [product._id, data, dispatch, isError, isLoading, isSuccess, toast]);
 
 	return (
-		<button onClick={handleToggleCart} className="flex border w-full justify-center items-center gap-x-2 py-[8px] rounded-lg bg-primary_red text-white">
+		<Button
+			effect={'shine'}
+			onClick={handleToggleCart}
+			className={cn(
+				"flex border justify-center items-center gap-x-2 py-[8px] rounded-lg bg-primary_red text-white",
+				className
+			)}
+		>
 			<IoCartOutline className="text-xl" />
 			Add To Cart
-		</button>
+		</Button>
 	);
 }

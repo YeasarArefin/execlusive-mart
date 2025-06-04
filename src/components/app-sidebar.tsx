@@ -1,10 +1,8 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { Package } from "lucide-react";
+import { Package, Tag } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { GoGear } from "react-icons/go";
-import { HiOutlineUsers } from "react-icons/hi2";
 import { MdOutlineDashboard } from "react-icons/md";
 
 import {
@@ -17,8 +15,7 @@ import {
 const links = [
   { name: "Dashboard", to: "/admin/dashboard", icon: MdOutlineDashboard },
   { name: "Products", to: "/admin/products", icon: Package },
-  { name: "Users", to: "/admin/users", icon: HiOutlineUsers },
-  { name: "Settings", to: "/settings", icon: GoGear },
+  { name: "Brands", to: "/admin/brands", icon: Tag },
 ];
 
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
@@ -42,7 +39,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
                 isActive && "bg-red-50 text-red-600 border border-red-100"
               )}
             >
-              <Icon className="text-lg" />
+              <Icon className="text-md" />
               <span>{name}</span>
             </Link>
           );

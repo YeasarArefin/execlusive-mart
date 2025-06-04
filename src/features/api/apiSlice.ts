@@ -69,7 +69,17 @@ export const apiSlice = createApi({
                 method: 'POST',
                 body: data
             })
-        })
+        }),
+        uploadProduct: builder.mutation({
+            query: (data) => ({
+                url: '/products',
+                method: 'POST',
+                body: data
+            })
+        }),
+        getBrands: builder.query({
+            query: () => `/brands`
+        }),
     })
 });
 export const {
@@ -86,4 +96,6 @@ export const {
     useSearchProductsQuery,
     useGetProductsCountQuery,
     usePaymentMutation,
+    useUploadProductMutation,
+    useGetBrandsQuery
 } = apiSlice;

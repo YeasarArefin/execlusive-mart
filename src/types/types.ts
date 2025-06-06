@@ -157,8 +157,8 @@ export interface UsePaginationProps {
 
 export type Brand = {
     _id?: string;
-    type: ('phone' | 'laptop' | 'accessory')[];
     name: string;
+    type: string[]; // Array of 'phone' | 'laptop' | 'accessory'
     image: string;
     createdAt?: Date;
     updatedAt?: Date;

@@ -25,9 +25,17 @@ export async function POST(request: NextRequest) {
     }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
     dbConnect();
+    const { searchParams } = new URL(request.url);
+    const _id = searchParams.get('id');
     try {
+
+        if (_id) {
+            const brand = await BrandModel.findById(_id) as Brand;
+            return sendResponse(true, 'brand sent successfully', 200, brand);
+        }
+
         const brands = await BrandModel.find({}) as Brand[];
         return sendResponse(true, 'brands sent successfully', 200, brands);
     } catch (error) {
@@ -51,5 +59,25 @@ export async function DELETE(request: NextRequest) {
     } catch (error) {
         console.log("🚀 ~ DELETE ~ error: /api/brand - error deleting brand", error);
         return sendResponse(false, 'error deleting brand', 500, error);
+    }
+}
+
+export async function PUT(request: NextRequest) {
+    dbConnect();
+    try {
+        const body = await request.json();
+        const { _id, name, type, image } = body as Brand;
+        if (!_id) {
+            return sendResponse(false, 'Brand id is required', 400);
+        };
+
+        const updated = await BrandModel.findByIdAndUpdate(_id, body, { new: true });
+        if (!updated) {
+            return sendResponse(false, 'Brand not found', 404);
+        }
+        return sendResponse(true, 'Brand updated successfully', 200, updated);
+    } catch (error) {
+        console.log("🚀 ~ PUT ~ error: /api/brand - error updating brand", error);
+        return sendResponse(false, 'error updating brand', 500, error);
     }
 }

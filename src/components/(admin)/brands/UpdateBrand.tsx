@@ -10,14 +10,15 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import LoadingIcon from "@/components/ui/loadingIcon";
-import { useUploadBrandMutation } from "@/features/api/apiSlice";
+import { useUpdateBrandMutation } from "@/features/api/apiSlice";
 import { Brand } from "@/types/types";
-import { Check, Plus } from "lucide-react";
+import { Check, Edit } from "lucide-react";
 import type React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BrandImageUpload from "./BrandImageUpload";
 
 const brandTypes = [
@@ -26,25 +27,41 @@ const brandTypes = [
     { id: "accessory", label: "Accessory" },
 ];
 
-export function AddBrand() {
+type UpdateBrandProps = {
+    brand: Brand;
+};
+
+export function UpdateBrand({ brand }: UpdateBrandProps) {
     const [open, setOpen] = useState(false);
-    const [image, setImage] = useState('');
+    const [image, setImage] = useState(brand.image || "");
     const [formData, setFormData] = useState<Partial<Brand>>({
-        name: "",
-        type: [],
-        image: "",
+        _id: brand._id,
+        name: brand.name,
+        type: brand.type,
+        image: brand.image,
     });
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [uploadBrand, { isError, isLoading, isSuccess }] = useUploadBrandMutation();
+
+    const [updateBrand, { isLoading, isSuccess }] = useUpdateBrandMutation();
+
+    useEffect(() => {
+        setFormData({
+            _id: brand._id,
+            name: brand.name,
+            type: brand.type,
+            image: brand.image,
+        });
+        setImage(brand.image || "");
+    }, [brand, open]);
+
     const getImage = (img: string) => {
         setImage(img);
+        setFormData((prev) => ({ ...prev, image: img }));
         return img;
     };
 
     const handleInputChange = (field: keyof Brand, value: any) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
     };
-
 
     const handleTypeChange = (typeId: string, checked: boolean) => {
         setFormData((prev) => {
@@ -59,27 +76,26 @@ export function AddBrand() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const newData = { ...formData, image };
-        uploadBrand(newData);
-        setFormData({
-            image: '',
-            name: '',
-            type: []
-        });
+        if (!formData._id) return;
+        const updatedData = { ...formData, image };
+        await updateBrand(updatedData);
     };
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="bg-red-600 hover:bg-red-700 text-white">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Brand
-                </Button>
+                <DropdownMenuItem onSelect={e => {
+                    e.preventDefault();
+                    setOpen(true);
+                }}>
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit Brand
+                </DropdownMenuItem>
             </DialogTrigger>
             <DialogContent className="max-w-2xl">
                 <DialogHeader>
-                    <DialogTitle>Add New Brand</DialogTitle>
-                    <DialogDescription>Fill in the details to add a new brand to your system.</DialogDescription>
+                    <DialogTitle>Update Brand</DialogTitle>
+                    <DialogDescription>Edit the details of this brand.</DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Brand Name */}
@@ -138,7 +154,7 @@ export function AddBrand() {
                     </div>
 
                     <DialogFooter className="pt-4 border-t">
-                        <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isSubmitting}>
+                        <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
                             Cancel
                         </Button>
                         <Button
@@ -146,7 +162,17 @@ export function AddBrand() {
                             className="bg-red-600 hover:bg-red-700 text-white"
                             disabled={isLoading || isSuccess}
                         >
-                            {isLoading ? <div className="flex gap-x-3 items-center"><LoadingIcon /> Adding...</div> : isSuccess ? <div className="flex gap-x-3 items-center"><Check className="mr-2" />Uploaded</div> : "Add Brand"}
+                            {isLoading ? (
+                                <div className="flex gap-x-3 items-center">
+                                    <LoadingIcon /> Updating...
+                                </div>
+                            ) : isSuccess ? (
+                                <div className="flex gap-x-3 items-center">
+                                    <Check className="mr-2" /> Updated
+                                </div>
+                            ) : (
+                                "Update Brand"
+                            )}
                         </Button>
                     </DialogFooter>
                 </form>
@@ -154,3 +180,13 @@ export function AddBrand() {
         </Dialog>
     );
 }
+
+// Add this export to your apiSlice.ts
+// updateBrand: builder.mutation({
+//     query: (data) => ({
+//         url: '/brands',
+//         method: 'PUT',
+//         body: data
+//     }),
+//     invalidatesTags: ['Brands'],
+// }),

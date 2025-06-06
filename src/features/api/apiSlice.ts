@@ -3,9 +3,9 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const apiSlice = createApi({
     reducerPath: 'api',
     baseQuery: fetchBaseQuery({
-        baseUrl: `${appUrl}api`
+        baseUrl: `${appUrl}api`,
     }),
-    tagTypes: ['Wishlists'],
+    tagTypes: ['Wishlists', 'Brands'],
     endpoints: (builder) => ({
         signUp: builder.mutation({
             query: (data) => ({
@@ -77,10 +77,40 @@ export const apiSlice = createApi({
                 body: data
             })
         }),
-        getBrands: builder.query({
-            query: () => `/brands`
+        uploadBrand: builder.mutation({
+            query: (data) => ({
+                url: '/brands',
+                method: 'POST',
+                body: data
+            }),
+            invalidatesTags: ['Brands'],
         }),
-    })
+        getBrands: builder.query({
+            query: () => `/brands`,
+            providesTags: ['Brands'],
+        }),
+        getBrand: builder.query({
+            query: (id) => `/brands`,
+            providesTags: ['Brands'],
+        }),
+        updateBrand: builder.mutation({
+            query: (data) => ({
+                url: '/brands',
+                method: 'PUT',
+                body: data
+            }),
+            invalidatesTags: ['Brands'],
+        }),
+        deleteBrand: builder.mutation({
+            query: ({ id }) => ({
+                url: '/brands',
+                method: 'DELETE',
+                body: { id }
+            }),
+            invalidatesTags: ['Brands'],
+        }),
+    }),
+
 });
 export const {
     useSignUpMutation,
@@ -97,5 +127,9 @@ export const {
     useGetProductsCountQuery,
     usePaymentMutation,
     useUploadProductMutation,
-    useGetBrandsQuery
+    useGetBrandsQuery,
+    useUploadBrandMutation,
+    useGetBrandQuery,
+    useUpdateBrandMutation,
+    useDeleteBrandMutation
 } = apiSlice;

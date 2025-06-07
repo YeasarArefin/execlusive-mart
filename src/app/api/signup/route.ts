@@ -1,4 +1,5 @@
 import dbConnect from "@/lib/dbConnect";
+import emailVerificationTemplate from "@/lib/email-templates/emailVerificationTemplate";
 import { default as sendEmail } from "@/lib/sendEmail";
 import sendResponse from "@/lib/sendResponse";
 import UserModel from "@/models/User";
@@ -16,7 +17,7 @@ export async function POST(request: NextRequest) {
 
         const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
         const from = process.env.SMTP_EMAIL || '';
-        const subject = 'E-mart || Email verification code';
+        const subject = 'OTP for Exclusive Mart Email Verification';
 
         if (existingVerifiedUserByEmail) {
             if (existingVerifiedUserByEmail.isVerified === true) {
@@ -46,7 +47,7 @@ export async function POST(request: NextRequest) {
 
             await newUser.save();
         }
-        await sendEmail(from, email, subject, `Verification code: ${verificationCode}`);
+        await sendEmail(from, email, subject, emailVerificationTemplate(verificationCode));
         return sendResponse(true, 'user created successfully', 200);
 
     } catch (error) {

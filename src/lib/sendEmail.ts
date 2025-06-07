@@ -19,10 +19,10 @@ export default async function sendEmail(from: string, to: string, subject: strin
 
     try {
         const emailResponse = await transporter.sendMail({
-            from: `E-Mart <${from}>`,
+            from: `Exclusive Mart <${from}>`,
             to,
             subject,
-            text: html
+            html
         });
         console.log("🚀 ~ sendEmail ~ info:", emailResponse);
     } catch (error) {

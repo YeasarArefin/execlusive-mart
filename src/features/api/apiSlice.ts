@@ -65,7 +65,7 @@ export const apiSlice = createApi({
         }),
         payment: builder.mutation({
             query: (data) => ({
-                url: 'http://localhost:8080/ssl-payment',
+                url: '/payment/request',
                 method: 'POST',
                 body: data
             })
@@ -122,6 +122,7 @@ export const {
     useGetCartQuery,
     useGetCartWithDetailsQuery,
     useGetCouponQuery,
+    useLazyGetCouponQuery,
     useGetProductsQuery,
     useSearchProductsQuery,
     useGetProductsCountQuery,

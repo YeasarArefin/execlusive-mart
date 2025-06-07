@@ -50,7 +50,7 @@ export type Banner = {
 };
 
 export type Coupon = {
-    _id: string,
+    _id?: string,
     name: string,
     code: string,
     expiryDate: Date,
@@ -116,12 +116,12 @@ export type PaymentOfProduct = {
 
 export type PaymentData = {
     name: string;
-    address: string | null,
-    city: string | null,
-    postCode: string | null,
-    phone: string | null,
+    address: string;
+    city: string;
+    postCode: string;
+    phone: string;
     email: string,
-    products: PaymentOfProduct[],
+    products?: PaymentOfProduct[],
     code: string,
 };
 

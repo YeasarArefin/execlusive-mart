@@ -3,6 +3,22 @@ import { appUrl } from "@/constants/appUrl";
 import getQuery from "@/lib/queries/getQueries";
 import { Product as ProductType } from "@/types/types";
 
+// Set the revalidation strategy - 'force-cache' for static generation
+export const dynamic = 'force-static';
+export const revalidate = 3600; // Revalidate every hour
+
+export async function generateStaticParams() {
+    const { success, data } = await getQuery(`${appUrl}api/products`);
+
+    if (!success || !data) {
+        return [];
+    }
+
+    return data.map((product: ProductType) => ({
+        id: product._id,
+    }));
+}
+
 export default async function Page({ params }: any) {
     const _id = params?.id as string || '';
     const { message, success, data } = await getQuery(`${appUrl}api/products?id=${_id}`);

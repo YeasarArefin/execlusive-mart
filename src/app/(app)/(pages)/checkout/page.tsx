@@ -2,13 +2,12 @@
 import CartCalculation from '@/components/cart/cart-calculation';
 import Heading from '@/components/home/Heading';
 import { Button } from '@/components/ui/button';
-import { usePaymentMutation } from '@/features/api/apiSlice';
+import { Input } from '@/components/ui/input';
+import { useLazyGetCouponQuery, usePaymentMutation } from '@/features/api/apiSlice';
 import { useAppSelector } from '@/lib/hooks/hooks';
-import { PaymentData, User } from '@/types/types';
-import axios from 'axios';
+import { Coupon, PaymentData, User } from '@/types/types';
 import { Building2, Mail, MapPinHouse, Phone, Signpost, User as UserIcon } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -19,7 +18,21 @@ export default function Page() {
     const products = cart.map(({ _id, cartQuantity }) => ({ _id, quantity: cartQuantity }));
     const { data: session } = useSession();
     const user = session?.user as User;
-    const router = useRouter();
+    const [userGivenCouponCode, setUserGivenCouponCode] = useState('');
+    const [appliedCoupon, setAppliedCoupon] = useState<Partial<Coupon> & { message?: string; success?: boolean; }>({});
+    const [getCoupon, couponResult] = useLazyGetCouponQuery();
+
+    const [initPayment, paymentInitResult] = usePaymentMutation();
+
+    const addCoupon = async (e) => {
+        e.preventDefault();
+        const result = await getCoupon(userGivenCouponCode);
+        if (result.data) {
+            setAppliedCoupon(result.data.data);
+        }
+        setUserGivenCouponCode('');
+    };
+
 
     const { register, handleSubmit } = useForm<PaymentData>({
         defaultValues: {
@@ -29,25 +42,22 @@ export default function Page() {
             postCode: "2941",
         },
     });
-    const [payment, { data: response, isLoading, isError, isSuccess, error }] = usePaymentMutation();
+
     const onSubmit = async (form: PaymentData) => {
-        setLoading(true);
         try {
-            const res = await axios.post("/api/payment/request");
-            if (res.data) {
-                const paymentUrl = res.data.url;
-                window.location.href = paymentUrl;
-                console.log("Payment URL:", res.data);
+            const res = await initPayment(form).unwrap();
+            console.log("🚀 ~ onSubmit ~ res:", res);
+            if (res.url) {
+                window.location.href = res.url;
+                console.log("Payment URL:", res);
             } else {
-                alert("Payment initialization failed: " + res.data.message);
+                console.log("Payment initialization failed: " + res?.message || "Unknown error");
             }
         } catch (err: any) {
-            console.error(err);
-            alert("An error occurred. Check console.");
-        } finally {
-            setLoading(false);
+            console.error("Payment error:", err);
         }
     };
+
 
     return (
         <div>
@@ -60,11 +70,11 @@ export default function Page() {
                     <div className='w-full md:w-3/4 flex flex-col col-span-3 gap-3 mt-10'>
                         <div className='relative'>
                             <UserIcon className='absolute top-2 left-3' />
-                            <input className='w-full border pl-12 px-4 py-2 rounded-md  outline-primary_red' value={user?.name} defaultValue={""} placeholder='Name' />
+                            <input className='w-full border pl-12 px-4 py-2 rounded-md  outline-primary_red' defaultValue={user?.name} placeholder='Name' />
                         </div>
                         <div className='relative'>
                             <Mail className='absolute top-2 left-3' />
-                            <input className='w-full border pl-12 px-4 py-2 rounded-md  outline-primary_red' value={user?.email} defaultValue={""} placeholder='Email' />
+                            <input className='w-full border pl-12 px-4 py-2 rounded-md  outline-primary_red' defaultValue={user?.email} placeholder='Email' />
                         </div>
                         <div className='relative'>
                             <MapPinHouse className='absolute top-2 left-3' />
@@ -84,10 +94,25 @@ export default function Page() {
                         </div>
                     </div>
                     <div className='col-span-2 border rounded-lg'>
-                        <CartCalculation />
-                        <div className='px-5 pt-3 pb-5'>
-                            <Button type="submit"
-                                disabled={loading} className='w-full'> {loading ? "Redirecting…" : "Proceed to Pay"}</Button>
+                        <CartCalculation appliedCoupon={appliedCoupon} />
+                        <div className='px-10'>
+                            <div className="flex items-center gap-x-5 mt-3">
+                                <Input placeholder="Coupon" onChange={(e) => setUserGivenCouponCode(e.target.value)} disabled={couponResult.isSuccess} />
+                                <Button onClick={addCoupon} disabled={couponResult.isSuccess}>
+                                    {
+                                        couponResult.isLoading ? 'Loading...' : 'Add'
+                                    }
+                                </Button>
+                            </div>
+                            <div className='py-2 text-red-600  text-sm'>
+                                {
+                                    couponResult.isError && couponResult.error && 'data' in couponResult.error && <h1>{(couponResult.error as any).data?.message}</h1>
+                                }
+                            </div>
+                            <div className='pt-3 pb-5'>
+                                <Button type="submit"
+                                    disabled={paymentInitResult.isLoading} className='w-full'> {paymentInitResult.isLoading ? "Redirecting…" : "Proceed to Pay"}</Button>
+                            </div>
                         </div>
                     </div>
                 </form>

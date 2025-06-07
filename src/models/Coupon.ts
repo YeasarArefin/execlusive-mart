@@ -1,7 +1,7 @@
 import { Coupon } from "@/types/types";
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 
-const BannerSchema: Schema<Coupon> = new mongoose.Schema({
+const BannerSchema = new mongoose.Schema({
     name: {
         type: String,
         required: [true, 'name is required']
@@ -18,6 +18,7 @@ const BannerSchema: Schema<Coupon> = new mongoose.Schema({
         type: Number,
         required: [true, 'discount is required']
     }
+
 },
     {
         timestamps: true

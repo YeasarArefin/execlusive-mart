@@ -1,9 +1,10 @@
 'use client';
 import Product from "@/components/home/Explore/Product";
 import ProductLoader from "@/components/product/ProductLoader";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import Pagination from "@/components/ui/pagination";
-import { useGetProductsCountQuery, useGetProductsQuery } from "@/features/api/apiSlice";
+import { useGetBrandsQuery, useGetProductsCountQuery, useGetProductsQuery } from "@/features/api/apiSlice";
 import usePagination from "@/hooks/usePagination";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -13,31 +14,30 @@ import { useDebounceCallback } from 'usehooks-ts';
 export default function Page() {
     const router = useRouter();
     const [brandFilters, setBrandFilters] = useState<string[]>([]);
-    const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
+    const [typeFilters, setTypeFilters] = useState<string[]>([]);
     const [name, setName] = useState<string>('');
     const searchParams = useSearchParams();
 
     const { data: pdCount } = useGetProductsCountQuery({});
     const productCount = pdCount?.data || 0;
     const { currentPage, handleItemPerPageChange, handleNextPage, handlePreviousPage, itemsPerPage, pages, setCurrentPage, setItemsPerPage } = usePagination({ totalItems: productCount });
-
+    const { data: brands, isSuccess: isBrandsSuccess, isLoading: isBrandsLoading } = useGetBrandsQuery({});
+    console.log(brands);
 
     // filtering
-    const handleBrandBox = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, checked } = e.target;
+    const handleBrandBox = (brand: string, checked: boolean) => {
         if (checked) {
-            setBrandFilters((prev) => [...prev, name]);
+            setBrandFilters((prev) => [...prev, brand]);
         } else {
-            setBrandFilters((prev) => prev.filter((filter) => filter !== name));
+            setBrandFilters((prev) => prev.filter((filter) => filter !== brand));
         }
     };
 
-    const handleCategoryBox = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, checked } = e.target;
+    const handleTypeBox = (type: string, checked: boolean) => {
         if (checked) {
-            setCategoryFilters((prev) => [...prev, name]);
+            setTypeFilters((prev) => [...prev, type]);
         } else {
-            setCategoryFilters((prev) => prev.filter((filter) => filter !== name));
+            setTypeFilters((prev) => prev.filter((filter) => filter !== type));
         }
     };
 
@@ -50,19 +50,19 @@ export default function Page() {
 
     useEffect(() => {
         const brandQuery = searchParams.get('brand');
-        const categoryQuery = searchParams.get('category');
+        const typeQuery = searchParams.get('type');
         const page = searchParams.get('page');
         const limit = searchParams.get('limit');
 
         if (brandQuery) setBrandFilters(brandQuery.split(','));
-        if (categoryQuery) setCategoryFilters(categoryQuery.split(','));
+        if (typeQuery) setTypeFilters(typeQuery.split(','));
         if (page) setCurrentPage(parseInt(page));
         if (limit) setItemsPerPage(parseInt(limit));
     }, [searchParams, setCurrentPage, setItemsPerPage]);
 
     const brandQuery = brandFilters.length > 0 ? `brand=${brandFilters.join(',')}&` : '';
-    const categoryQuery = categoryFilters.length > 0 ? `category=${categoryFilters.join(',')}&` : '';
-    let query = [brandQuery, categoryQuery].filter(Boolean).join('&');
+    const typeQuery = typeFilters.length > 0 ? `type=${typeFilters.join(',')}&` : '';
+    let query = [brandQuery, typeQuery].filter(Boolean).join('&');
 
     if (name.length > 0) {
         query = query ? `${query}&name=${name}` : `name=${name}&`;
@@ -75,7 +75,7 @@ export default function Page() {
 
     useEffect(() => {
         router.push(`?${query}`, undefined);
-    }, [brandFilters, categoryFilters, name, currentPage, itemsPerPage, router, query]);
+    }, [brandFilters, typeFilters, name, currentPage, itemsPerPage, router, query]);
 
     let content;
     if (isLoading) {
@@ -117,23 +117,72 @@ export default function Page() {
                             </div>
                         </div>
 
-                        <div>
-                            <div>Brands</div>
-                            <div>
-                                <div><input type="checkbox" className="mr-2" onChange={handleBrandBox} name="Apple" checked={brandFilters.includes('Apple')} />Apple</div>
-                                <div><input type="checkbox" className="mr-2" onChange={handleBrandBox} name="zotac" checked={brandFilters.includes('zotac')} />Zotac</div>
-                                <div><input type="checkbox" className="mr-2" onChange={handleBrandBox} name="amd" checked={brandFilters.includes('amd')} />Amd</div>
-                                <div><input type="checkbox" className="mr-2" onChange={handleBrandBox} name="intel" checked={brandFilters.includes('intel')} />Intel</div>
+                        <div className="mb-6">
+                            <h3 className="text-lg font-medium mb-3">Brands</h3>
+                            <div className="space-y-2">
+                                {
+                                    isBrandsSuccess && brands?.data.map(brand => (
+                                        <div key={brand._id} className="flex items-center space-x-2">
+                                            <Checkbox
+                                                id={`brand-${brand._id}`}
+                                                checked={brandFilters.includes(brand.name)}
+                                                onCheckedChange={(checked) => handleBrandBox(brand.name, checked as boolean)}
+                                            />
+                                            <label
+                                                htmlFor={`brand-${brand._id}`}
+                                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                            >
+                                                {brand.name}
+                                            </label>
+                                        </div>
+                                    ))
+                                }
+
                             </div>
                         </div>
 
-                        <div>
-                            <div>Categories</div>
-                            <div>
-                                <div><input type="checkbox" className="mr-2" onChange={handleCategoryBox} name="phone" checked={categoryFilters.includes('phone')} />Phone</div>
-                                <div><input type="checkbox" className="mr-2" onChange={handleCategoryBox} name="gadget" checked={categoryFilters.includes('gadget')} />Gadget</div>
-                                <div><input type="checkbox" className="mr-2" onChange={handleCategoryBox} name="laptop" checked={categoryFilters.includes('laptop')} />Laptop</div>
-                                <div><input type="checkbox" className="mr-2" onChange={handleCategoryBox} name="accessory" checked={categoryFilters.includes('accessory')} />Accessory</div>
+                        <div className="mb-6">
+                            <h3 className="text-lg font-medium mb-3">Types</h3>
+                            <div className="space-y-2">
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox
+                                        id="type-phone"
+                                        checked={typeFilters.includes('phone')}
+                                        onCheckedChange={(checked) => handleTypeBox('phone', checked as boolean)}
+                                    />
+                                    <label
+                                        htmlFor="type-phone"
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    >
+                                        Phone
+                                    </label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox
+                                        id="type-laptop"
+                                        checked={typeFilters.includes('laptop')}
+                                        onCheckedChange={(checked) => handleTypeBox('laptop', checked as boolean)}
+                                    />
+                                    <label
+                                        htmlFor="type-laptop"
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    >
+                                        Laptop
+                                    </label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox
+                                        id="type-accessory"
+                                        checked={typeFilters.includes('accessory')}
+                                        onCheckedChange={(checked) => handleTypeBox('accessory', checked as boolean)}
+                                    />
+                                    <label
+                                        htmlFor="type-accessory"
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    >
+                                        Accessory
+                                    </label>
+                                </div>
                             </div>
                         </div>
 

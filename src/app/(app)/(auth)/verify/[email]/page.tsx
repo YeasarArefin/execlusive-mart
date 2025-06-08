@@ -64,20 +64,20 @@ export default function Page() {
     }, [error, isError, isSuccess, reset, response, router, toast]);
 
     return (
-        <div>
-            <div className="w-5/12 mx-auto flex flex-col items-center gap-y-5 p-6 border rounded-xl shadow-sm">
-                <div className="flex flex-col items-center text-4xl font-black">
+        <div className="container mx-auto py-10">
+            <div className="w-full max-w-md mx-auto flex flex-col items-center gap-y-5 p-8 border rounded-xl shadow-sm">
+                <div className="flex flex-col items-center text-4xl font-black mb-2">
                     <h1>Verify Your</h1>
                     <h1>Account</h1>
                 </div>
-                <h1>Enter the 6 digit verification code sent to your email</h1>
+                <p className="text-center text-muted-foreground mb-4">Enter the 6 digit verification code sent to your email</p>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-y-5">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col gap-y-6">
                         <FormField
                             control={form.control}
                             name="verificationCode"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className="mx-auto">
                                     <FormControl>
                                         <InputOTP maxLength={6} {...field}>
                                             <InputOTPGroup>
@@ -93,12 +93,12 @@ export default function Page() {
                                             </InputOTPGroup>
                                         </InputOTP>
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="text-center mt-2" />
                                 </FormItem>
                             )}
                         />
-                        <div className="flex justify-center">
-                            <Button type="submit" disabled={isLoading}>
+                        <div className="flex justify-center mt-2">
+                            <Button type="submit" className="px-8" disabled={isLoading}>
                                 {isLoading ? <span className="flex items-center gap-x-2"><BiLoaderAlt className="animate-spin" /> Verifying...</span> : 'Verify'}
                             </Button>
                         </div>

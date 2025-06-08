@@ -18,10 +18,10 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <div className={inter.className}>
+        <div className={`${inter.className} flex flex-col min-h-screen`}>
             <TopNotification />
             <Navbar />
-            <div className="container">
+            <div className="container flex-grow">
                 {children}
                 <Toaster />
             </div>

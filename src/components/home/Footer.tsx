@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function Footer() {
     return (
-        <footer className="bg-black text-white py-12 px-4 mt-20">
+        <footer className="bg-black text-white py-12 px-4 mt-40">
             <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
                 {/* Exclusive Section */}
                 <div className="space-y-4">

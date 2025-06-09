@@ -1,5 +1,7 @@
 import { User } from "@/types/types";
 import mongoose, { Schema } from "mongoose";
+import CartProductSchema from "./CartProduct";
+import CouponModel from "./Coupon";
 import ProductModel from "./Product";
 
 const UserSchema: Schema<User> = new mongoose.Schema({
@@ -37,11 +39,13 @@ const UserSchema: Schema<User> = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: ProductModel.modelName
     }],
-    cart: [],
-    usedCoupons: {
-        type: [String],
-        default: []
-    }
+    cart: [CartProductSchema],
+    usedCoupons: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: CouponModel.modelName
+        }
+    ]
 },
     {
         timestamps: true

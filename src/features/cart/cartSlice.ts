@@ -1,10 +1,9 @@
-import { compareProducts } from '@/lib/compareProducts';
-import { Product } from '@/types/types';
+import { CartProduct } from '@/types/types';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 interface CartState {
-    cart: Product[];
+    cart: CartProduct[];
     totalItems: number;
     totalPrice: number;
 }
@@ -19,7 +18,7 @@ const cartSlice = createSlice({
     name: 'cart',
     initialState,
     reducers: {
-        setInitialCart: (state, action: PayloadAction<Product[]>) => {
+        setInitialCart: (state, action: PayloadAction<CartProduct[]>) => {
             state.cart = JSON.parse(JSON.stringify(action.payload));
             const cart = action.payload;
             let totalCartQuantity = 0;
@@ -28,16 +27,8 @@ const cartSlice = createSlice({
             }
             state.totalItems = totalCartQuantity;
         },
-        addToCart: (state, action: PayloadAction<{ product: Product, quantity: number; }>) => {
-            let existingIndex = -1;
-            for (let i = 0; i < state.cart.length; i++) {
-                const existingProduct = state.cart[i];
-                const isSame = compareProducts(existingProduct, action.payload.product);
-                if (isSame) {
-                    existingIndex = i;
-                    break;
-                }
-            }
+        addToCart: (state, action: PayloadAction<{ product: CartProduct, quantity: number; }>) => {
+            const existingIndex = state.cart.findIndex(item => item.cartId === action.payload.product.cartId);
 
             const product = JSON.parse(JSON.stringify(action.payload.product));
             if (existingIndex > -1) {
@@ -73,17 +64,8 @@ const cartSlice = createSlice({
                 state.totalItems--;
             }
         },
-        updateTotalPrice: (state) => {
-            // Calculate total price using selected variant price and cartQuantity
-            let total = 0;
-            for (const product of state.cart) {
-                // Assuming the selected variant is always the first one for now
-                const variant = product?.variants[0];
-                if (variant) {
-                    total += variant.price * product.cartQuantity;
-                }
-            }
-            state.totalPrice = total;
+        updateTotalPrice: (state, action: PayloadAction<number>) => {
+            state.totalPrice = action.payload;
         }
     },
 });

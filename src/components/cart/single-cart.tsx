@@ -1,7 +1,7 @@
 import { useAddToCartApiMutation } from "@/features/api/apiSlice";
 import { removeFromCart } from "@/features/cart/cartSlice";
 import { useAppDispatch } from "@/lib/hooks/hooks";
-import { ColorType, ProductImageType, Product as ProductType, ProductVariant } from "@/types/types";
+import { CartProduct } from "@/types/types";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,23 +9,18 @@ import { RxCross2 } from "react-icons/rx";
 import { Button } from "../ui/button";
 import CartQuantityController from "./cart-quantity-controller";
 
-export default function SingleCart({ product }: { product: ProductType; }) {
+export default function SingleCart({ product }: { product: CartProduct; }) {
     const {
         _id,
-        images,
+        image,
         cartQuantity,
         name,
-        colors,
-        variants,
+        color,
+        price,
         cartId,
+        variant,
     } = product || {};
 
-    const selectedColor: ColorType = colors && colors[0];
-    const selectedVariant: ProductVariant = variants && variants[0];
-    const selectedImage: ProductImageType = images && images[0];
-
-    const price = selectedVariant?.price ?? 0;
-    const size = selectedVariant?.size ?? "";
     const subtotal = price * (cartQuantity ?? 1);
 
     const dispatch = useAppDispatch();
@@ -38,12 +33,20 @@ export default function SingleCart({ product }: { product: ProductType; }) {
         cartId && dispatch(removeFromCart(cartId));
         addToCartApi({
             userId,
-            productId: _id,
+            _id,
             cartId,
-            quantity: 1,
-            color: selectedColor,
-            variant: selectedVariant,
-            mode: 'remove'
+            cartQuantity: 1,
+            mode: 'remove',
+            type: product.type,
+            name: product.name,
+            description: product.description,
+            image: product.image,
+            discount: product.discount,
+            featured: product.featured,
+            brand: product.brand,
+            price: product.price,
+            variant: product.variant,
+            color: product.color
         });
     };
 
@@ -51,7 +54,7 @@ export default function SingleCart({ product }: { product: ProductType; }) {
         <div className="grid grid-cols-1 sm:grid-cols-6 items-center justify-items-center border px-4 py-4 hover:shadow-xl duration-200 font-semibold rounded-lg min-h-[120px] gap-y-4 w-full text-center sm:text-left">
             <div className="flex flex-col sm:flex-row items-center sm:col-span-2 gap-3 w-full max-w-full">
                 <Image
-                    src={selectedImage?.image || "/placeholder.png"}
+                    src={image || "/placeholder.png"}
                     width={80}
                     height={60}
                     alt="product_image"
@@ -64,10 +67,10 @@ export default function SingleCart({ product }: { product: ProductType; }) {
                     </Link>
                     <div className="capitalize flex flex-wrap justify-center sm:justify-start font-medium gap-x-2 text-[12px]">
                         <span>
-                            color: {selectedColor?.color_name}
+                            color: {color}
                         </span>
                         <span>
-                            size: <span className="uppercase">{size}</span>
+                            Size: {variant}
                         </span>
                     </div>
                 </div>

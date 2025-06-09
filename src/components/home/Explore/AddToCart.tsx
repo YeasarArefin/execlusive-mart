@@ -4,7 +4,7 @@ import { useAddToCartApiMutation } from "@/features/api/apiSlice";
 import { addToCart } from "@/features/cart/cartSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks/hooks";
 import { cn } from "@/lib/utils";
-import { ColorType, Product, ProductVariant } from "@/types/types";
+import { CartApiPayload, CartProduct, ColorType, Product, ProductVariant } from "@/types/types";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { IoCartOutline } from "react-icons/io5";
@@ -26,30 +26,45 @@ export default function AddToCart({ product, color, variant, quantity = 1, class
 		// Select default color and variant (first in array)
 		const selectedColor: ColorType = color || product?.colors[0];
 		const selectedVariant: ProductVariant = variant || product?.variants[0];
-		const selectedImage = product?.images.filter(img => img?.color_name === selectedColor?.color_name);
+		const selectedImage = product?.images.find(img => img?.color_name === selectedColor?.color_name);
 
-
-		// Prepare newProduct for cart (store selected color and variant as arrays for compatibility)
-		const newProduct: Product = {
-			...product,
+		// Prepare CartProduct for Redux store
+		const cartProduct: CartProduct = {
+			_id: product._id,
+			type: product.type,
 			cartId,
-			images: selectedImage,
-			colors: [selectedColor],
-			variants: [selectedVariant],
+			name: product.name,
+			description: product.description,
+			image: selectedImage?.image || "",
+			discount: product.discount,
+			featured: product.featured,
+			brand: product.brand,
 			cartQuantity: quantity,
+			price: selectedVariant?.price || 0,
+			variant: selectedVariant?.size || '',
+			color: selectedColor?.color_name || "",
 		};
 
-		const apiPayload = {
-			userId,
-			productId: product._id,
+		// Prepare CartApiPayload for API
+		const apiPayload: CartApiPayload = {
+			userId: userId || "",
+			_id: product._id,
 			cartId,
-			quantity: quantity,
-			color: selectedColor,
-			variant: selectedVariant,
+			type: product.type,
+			name: product.name,
+			description: product.description,
+			image: selectedImage?.image || "",
+			discount: product.discount,
+			featured: product.featured,
+			brand: product.brand,
+			cartQuantity: quantity,
+			price: selectedVariant?.price || 0,
+			variant: selectedVariant?.size || '',
+			color: selectedColor?.color_name || "",
 			mode: 'add'
 		};
 
-		dispatch(addToCart({ product: newProduct, quantity: 1 }));
+		dispatch(addToCart({ product: cartProduct, quantity: 1 }));
 		addToCartApi(apiPayload);
 	};
 

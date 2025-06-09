@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { useLazyGetCouponQuery, usePaymentMutation } from '@/features/api/apiSlice';
 import { useAppSelector } from '@/lib/hooks/hooks';
 import { Coupon, PaymentData, User } from '@/types/types';
+import { setCookie } from 'cookies-next';
 import { Building2, Mail, MapPinHouse, Phone, Signpost, User as UserIcon } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
@@ -13,7 +14,6 @@ import { useForm } from 'react-hook-form';
 
 export default function Page() {
 
-    const [loading, setLoading] = useState(false);
     const cart = useAppSelector((state) => state.cart.cart);
     const products = cart.map(({ _id, cartQuantity }) => ({ _id, quantity: cartQuantity }));
     const { data: session } = useSession();
@@ -26,7 +26,7 @@ export default function Page() {
 
     const addCoupon = async (e) => {
         e.preventDefault();
-        const result = await getCoupon(userGivenCouponCode);
+        const result = await getCoupon({ code: userGivenCouponCode, email: user?.email });
         if (result.data) {
             setAppliedCoupon(result.data.data);
         }
@@ -45,11 +45,18 @@ export default function Page() {
 
     const onSubmit = async (form: PaymentData) => {
         try {
-            const res = await initPayment(form).unwrap();
-            console.log("🚀 ~ onSubmit ~ res:", res);
+            const newPaymentData: PaymentData = {
+                ...form,
+                name: user?.name,
+                email: user?.email,
+                couponCode: appliedCoupon.code ?? '',
+            };
+            const res = await initPayment(newPaymentData).unwrap();
+
             if (res.url) {
                 window.location.href = res.url;
                 console.log("Payment URL:", res);
+                setCookie('checkout_data', JSON.stringify(newPaymentData), { maxAge: 60 * 60 });
             } else {
                 console.log("Payment initialization failed: " + res?.message || "Unknown error");
             }

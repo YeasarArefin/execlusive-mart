@@ -32,9 +32,42 @@ export type Product = {
     featured: boolean,
     brand: string,
     cartQuantity: number,
-    category: String,
     variants: ProductVariant[],
     colors: ColorType[],
+};
+
+export type CartProduct = {
+    _id?: string,
+    type: 'phone' | 'laptop' | 'accessory',
+    cartId?: string,
+    name: string,
+    description: string,
+    image: string;
+    discount: number,
+    featured: boolean,
+    brand: string,
+    cartQuantity: number,
+    price: number,
+    variant: string;
+    color: string;
+};
+
+export type CartApiPayload = {
+    userId: string,
+    mode: 'add' | 'increase' | 'decrease' | 'remove',
+    _id?: string,
+    type: 'phone' | 'laptop' | 'accessory',
+    cartId?: string,
+    name: string,
+    description: string,
+    image: string;
+    discount: number,
+    featured: boolean,
+    brand: string,
+    cartQuantity: number,
+    price: number,
+    variant: string;
+    color: string;
 };
 
 export type Category = {
@@ -66,15 +99,23 @@ export type User = {
     isVerified: boolean,
     isAdmin: boolean,
     wishlists: ObjectId[],
-    cart: Product[],
+    cart: CartApiPayload[],
     usedCoupons: string[];
 };
 
 export type Order = {
-    user: ObjectId,
-    products: ObjectId[],
-    payment: number,
+    _id?: string,
+    email: string,
+    name: string,
+    address: string,
+    city: string,
+    postCode: string,
+    phone: string,
+    products: CartProduct[],
     usedCoupon: string;
+    paidAmount?: number;
+    transactionId?: string;
+    discount?: number;
 };
 
 export type Review = {
@@ -121,8 +162,7 @@ export type PaymentData = {
     postCode: string;
     phone: string;
     email: string,
-    products?: PaymentOfProduct[],
-    code: string,
+    couponCode: string,
 };
 
 export type SSLResponse = {

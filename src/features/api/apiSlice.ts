@@ -52,7 +52,7 @@ export const apiSlice = createApi({
             query: (email) => `/cart?email=${email}&property=true`,
         }),
         getCoupon: builder.query({
-            query: (code) => `/coupons?code=${code}`
+            query: ({ code, email }) => `/coupons?code=${code}&email=${email}`
         }),
         getProducts: builder.query({
             query: (query) => `/products?${query}`

@@ -38,11 +38,11 @@ export default function Wishlists() {
                 <div className="flex flex-col gap-y-5 w-full">
                     {content}
                 </div>
-                <div className="flex justify-center mt-10">
+                {cart.length > 0 && <div className="flex justify-center mt-10">
                     <Link href={'/checkout'}>
                         <Button>Checkout</Button>
                     </Link>
-                </div>
+                </div>}
             </div>
         </section>
     );

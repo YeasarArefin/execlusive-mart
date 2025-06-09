@@ -1,18 +1,16 @@
 import { updateTotalPrice } from "@/features/cart/cartSlice";
 import { useAppSelector } from "@/lib/hooks/hooks";
 import { useDispatch } from "react-redux";
-export default function CartCalculation({ appliedCoupon }) {
 
+export default function CartCalculation({ appliedCoupon }) {
     const cart = useAppSelector(state => state.cart.cart);
     const dispatch = useDispatch();
 
-    // Calculate subtotal using selected variant price
+    // Calculate subtotal directly using the price field from CartProduct
     let subTotal = 0;
     for (let i = 0; i < cart.length; i++) {
         const product = cart[i];
-        // Use the first variant in the array (selected variant)
-        const variant = product?.variants && product?.variants[0];
-        const price = (variant?.price ?? 0) * (product?.cartQuantity ?? 1);
+        const price = product.price * product.cartQuantity;
         subTotal += price;
     }
 
@@ -44,7 +42,7 @@ export default function CartCalculation({ appliedCoupon }) {
                 </div>
                 <div className="flex justify-between">
                     <h1>Total</h1>
-                    <h1 className="w-14">${total.toFixed(2)}</h1>
+                    <h1 className="w-14">${Math.floor(total)}</h1>
                 </div>
                 <div>
                     {

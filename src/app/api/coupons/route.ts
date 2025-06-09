@@ -1,3 +1,4 @@
+import checkCouponValidity from "@/lib/checkCouponValidity";
 import dbConnect from "@/lib/dbConnect";
 import sendResponse from "@/lib/sendResponse";
 import CouponModel from "@/models/Coupon";
@@ -21,23 +22,13 @@ export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url);
         const code = searchParams.get('code');
-        if (code) {
-            const singleCoupon = await CouponModel.findOne({ code });
-            if (!singleCoupon) return sendResponse(false, 'coupon not found', 404);
+        const email = searchParams.get('email');
 
-            const isExpired = new Date() > new Date(singleCoupon.expiryDate);
-            console.log("🚀 ~ GET ~ expired:", isExpired);
-            console.log(new Date(singleCoupon.expiryDate));
-            console.log(new Date);
-
-            if (isExpired) {
-                return sendResponse(false, 'coupon expired', 400);
-
-            } else {
-                return sendResponse(true, 'coupon', 200, singleCoupon);
-            }
-
+        if (code && email) {
+            const couponResult = await checkCouponValidity(code, email);
+            return sendResponse(couponResult.success, couponResult.message, couponResult.status, couponResult.data);
         }
+
         const coupon = await CouponModel.find({});
         return sendResponse(true, 'coupon sent successfully', 200, coupon);
 

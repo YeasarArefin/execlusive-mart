@@ -1,3 +1,4 @@
+import { appUrl } from "@/constants/appUrl";
 import calculateTotalAmount from "@/lib/calculateTotalAmount";
 import generateTransactionId from "@/lib/generateTransactionId";
 import { dataConfig, sslConfig } from "@/lib/sslConfig";
@@ -16,9 +17,9 @@ export async function POST(request: NextRequest) {
         const data = dataConfig({
             total_amount: totalAmount,
             tran_id: transactionId,
-            success_url: `http://localhost:3000/api/payment/success?trx_id=${transactionId}`,
-            fail_url: `http://localhost:3000/api/payment/fail`,
-            cancel_url: `http://localhost:3000/api/payment/cancel`,
+            success_url: `${appUrl}api/payment/success?trx_id=${transactionId}`,
+            fail_url: `${appUrl}api/payment/fail`,
+            cancel_url: `${appUrl}api/payment/cancel`,
             product_name: "Order from Exclusive Mart",
             product_category: "electronics",
             cus_name: name,

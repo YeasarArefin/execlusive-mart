@@ -181,7 +181,6 @@ export const columns: ColumnDef<Order>[] = [
                         <DropdownMenuSeparator />
                         <ViewDetails orderId={order.orderId || ""} />
                         <DropdownMenuSeparator />
-
                         {/* Dynamic status update buttons with mutation */}
                         {order.status === "pending" && (
                             <DropdownMenuItem onClick={() => handleStatusUpdate("processing")}>

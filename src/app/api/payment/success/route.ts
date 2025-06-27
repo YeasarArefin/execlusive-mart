@@ -1,3 +1,4 @@
+import { appUrl } from "@/constants/appUrl";
 import calculateTotalAmount from "@/lib/calculateTotalAmount";
 import dbConnect from "@/lib/dbConnect";
 import orderConfirmationTemplate from "@/lib/email-templates/orderConfirmationTemplate";
@@ -68,7 +69,7 @@ export async function POST(req: NextRequest) {
         const subject = `Exclusive Mart Order#${data.orderId} Confirmed`;
         await sendEmail(from, email, subject, orderConfirmationTemplate(data));
 
-        return NextResponse.redirect(`http://localhost:3000/payment-success/${transactionId}`, 302);
+        return NextResponse.redirect(`${appUrl}payment-success/${transactionId}`, 302);
     } catch (error) {
         console.error("Error creating order:", error);
         return NextResponse.json({ message: "Failed to create order", error }, { status: 500 });

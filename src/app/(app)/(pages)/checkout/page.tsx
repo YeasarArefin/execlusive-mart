@@ -1,4 +1,5 @@
 'use client';
+
 import CartCalculation from '@/components/cart/cart-calculation';
 import Heading from '@/components/home/Heading';
 import { Button } from '@/components/ui/button';
@@ -6,25 +7,23 @@ import { Input } from '@/components/ui/input';
 import { useLazyGetCouponQuery, usePaymentMutation } from '@/features/api/apiSlice';
 import { useAppSelector } from '@/lib/hooks/hooks';
 import { Coupon, PaymentData, User } from '@/types/types';
-import { setCookie } from 'cookies-next';
 import { Building2, Mail, MapPinHouse, Phone, Signpost, User as UserIcon } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 export default function Page() {
-
     const cart = useAppSelector((state) => state.cart.cart);
     const products = cart.map(({ _id, cartQuantity }) => ({ _id, quantity: cartQuantity }));
     const { data: session } = useSession();
     const user = session?.user as User;
     const [userGivenCouponCode, setUserGivenCouponCode] = useState('');
     const [appliedCoupon, setAppliedCoupon] = useState<Partial<Coupon> & { message?: string; success?: boolean; }>({});
-    const [getCoupon, couponResult] = useLazyGetCouponQuery();
 
+    const [getCoupon, couponResult] = useLazyGetCouponQuery();
     const [initPayment, paymentInitResult] = usePaymentMutation();
 
-    const addCoupon = async (e) => {
+    const addCoupon = async (e: React.FormEvent) => {
         e.preventDefault();
         const result = await getCoupon({ code: userGivenCouponCode, email: user?.email });
         if (result.data) {
@@ -32,7 +31,6 @@ export default function Page() {
         }
         setUserGivenCouponCode('');
     };
-
 
     const { register, handleSubmit } = useForm<PaymentData>({
         defaultValues: {
@@ -51,7 +49,6 @@ export default function Page() {
                 email: user?.email,
             };
 
-            // Only add couponCode if a coupon has been applied
             if (appliedCoupon.code) {
                 newPaymentData.couponCode = appliedCoupon.code;
             }
@@ -59,9 +56,10 @@ export default function Page() {
             const res = await initPayment(newPaymentData).unwrap();
 
             if (res.url) {
+                // Replace cookies-next with native cookie set
+                document.cookie = `checkout_data=${encodeURIComponent(JSON.stringify(newPaymentData))}; max-age=${60 * 60}; path=/`;
+
                 window.location.href = res.url;
-                console.log("Payment URL:", res);
-                setCookie('checkout_data', JSON.stringify(newPaymentData), { maxAge: 60 * 60 });
             } else {
                 console.log("Payment initialization failed: " + res?.message || "Unknown error");
             }
@@ -70,14 +68,10 @@ export default function Page() {
         }
     };
 
-
     return (
         <div>
-            <div>
-                <Heading name='Checkout' title='Proceed to pay' />
-            </div>
+            <Heading name='Checkout' title='Proceed to pay' />
             <div className="">
-
                 <form onSubmit={handleSubmit(onSubmit)} className='grid grid-cols-1 md:grid-cols-5'>
                     <div className='w-full md:w-3/4 flex flex-col col-span-3 gap-3 mt-10'>
                         <div className='relative'>
@@ -98,7 +92,7 @@ export default function Page() {
                         </div>
                         <div className='relative'>
                             <Phone className='absolute top-2 left-3' />
-                            <input className='w-full border pl-12 px-4 py-2 rounded-md  outline-primary_red' placeholder='Phone Number '{...register('phone')} />
+                            <input className='w-full border pl-12 px-4 py-2 rounded-md  outline-primary_red' placeholder='Phone Number' {...register('phone')} />
                         </div>
                         <div className='relative'>
                             <Signpost className='absolute top-2 left-3' />
@@ -111,19 +105,17 @@ export default function Page() {
                             <div className="flex items-center gap-x-5 mt-3">
                                 <Input placeholder="Coupon" onChange={(e) => setUserGivenCouponCode(e.target.value)} disabled={couponResult.isSuccess} />
                                 <Button onClick={addCoupon} disabled={couponResult.isSuccess}>
-                                    {
-                                        couponResult.isLoading ? 'Loading...' : 'Add'
-                                    }
+                                    {couponResult.isLoading ? 'Loading...' : 'Add'}
                                 </Button>
                             </div>
-                            <div className='py-2 text-red-600  text-sm'>
-                                {
-                                    couponResult.isError && couponResult.error && 'data' in couponResult.error && <h1>{(couponResult.error as any).data?.message}</h1>
-                                }
+                            <div className='py-2 text-red-600 text-sm'>
+                                {couponResult.isError && couponResult.error && 'data' in couponResult.error &&
+                                    <h1>{(couponResult.error as any).data?.message}</h1>}
                             </div>
                             <div className='pt-3 pb-5'>
-                                <Button type="submit"
-                                    disabled={paymentInitResult.isLoading} className='w-full'> {paymentInitResult.isLoading ? "Redirecting…" : "Proceed to Pay"}</Button>
+                                <Button type="submit" disabled={paymentInitResult.isLoading} className='w-full'>
+                                    {paymentInitResult.isLoading ? "Redirecting…" : "Proceed to Pay"}
+                                </Button>
                             </div>
                         </div>
                     </div>
@@ -131,4 +123,4 @@ export default function Page() {
             </div>
         </div>
     );
-};
+}

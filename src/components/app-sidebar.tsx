@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { Package, Tag } from "lucide-react";
+import { Package, Package2, Tag } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MdOutlineDashboard } from "react-icons/md";
@@ -16,6 +16,7 @@ const links = [
   { name: "Dashboard", to: "/admin/dashboard", icon: MdOutlineDashboard },
   { name: "Products", to: "/admin/products", icon: Package },
   { name: "Brands", to: "/admin/brands", icon: Tag },
+  { name: "Orders", to: "/admin/orders", icon: Package2 },
 ];
 
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {

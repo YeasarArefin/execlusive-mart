@@ -115,7 +115,9 @@ export type Order = {
     usedCoupon: string;
     paidAmount?: number;
     transactionId?: string;
+    orderId?: string;
     discount?: number;
+    status?: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
 };
 
 export type Review = {
@@ -162,7 +164,7 @@ export type PaymentData = {
     postCode: string;
     phone: string;
     email: string,
-    couponCode: string,
+    couponCode?: string,
 };
 
 export type SSLResponse = {
@@ -193,6 +195,7 @@ export interface UsePaginationProps {
     pages: number[];
     setItemsPerPage: (n: number) => void;
     totalItems: number;
+    disabled?: boolean;
 }
 
 export type Brand = {

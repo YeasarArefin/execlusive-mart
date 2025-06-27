@@ -18,8 +18,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import LetterAvatar from 'react-avatar';
+import { FiBox } from "react-icons/fi";
 import { IoMdHeartEmpty } from "react-icons/io";
-import { IoCartOutline, IoShieldOutline } from "react-icons/io5";
+import { IoCartOutline } from "react-icons/io5";
 import { PiSignOut } from "react-icons/pi";
 import { Button } from "../ui/button";
 import NotifyBadge from "../ui/notify-badge";
@@ -46,8 +47,30 @@ export default function NavItems({ links }: { links: Link[]; }) {
         // eslint-disable-next-line react-hooks/rules-of-hooks
         const pathname = usePathname();
         const isActive = pathname.endsWith(to);
+        if (to === '/admin/dashboard' && !user?.isAdmin) {
+            return null;
+        }
         return <Link key={to} href={to} className={cn("text-gray-600 text-sm font-medium", { "text-black font-bold": isActive })}>{name}</Link>;
     });
+
+    const dropdownItems = [
+        {
+            name: 'Wishlists',
+            to: '/wishlists',
+            Icon: IoMdHeartEmpty
+        },
+        {
+            name: 'Cart',
+            to: '/cart',
+            Icon: IoCartOutline
+        },
+        {
+            name: 'Orders',
+            to: '/orders',
+            Icon: FiBox
+        },
+
+    ];
 
     let authContent;
     if (status === 'unauthenticated') {
@@ -80,22 +103,15 @@ export default function NavItems({ links }: { links: Link[]; }) {
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
-                        <Link href='/wishlists'>
-                            <DropdownMenuItem className="gap-x-2">
-                                <IoMdHeartEmpty className="text-2xl" />
-                                <span>Wishlists</span>
-                            </DropdownMenuItem>
-                        </Link>
-                        <DropdownMenuItem className="gap-x-2">
-                            <IoCartOutline className="text-2xl" />
-                            <span>Cart</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="gap-x-2">
-                            <IoShieldOutline className="text-2xl" />
-                            <Link href='/admin/dashboard'>
-                                <span>Dashboard</span>
-                            </Link>
-                        </DropdownMenuItem>
+
+                        {dropdownItems.map(({ name, to, Icon }) => {
+                            return <Link href={to} key={to}>
+                                <DropdownMenuItem className="gap-x-2">
+                                    <Icon className="text-2xl" />
+                                    <span>{name}</span>
+                                </DropdownMenuItem>
+                            </Link>;
+                        })}
                         <DropdownMenuSeparator />
                         <DropdownMenuItem className="gap-x-2" onClick={() => signOut()}>
                             <PiSignOut className="text-xl" />

@@ -6,12 +6,12 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 
 export default function Pagination(props: UsePaginationProps) {
 
-    const { itemsPerPage, currentPage, handleItemPerPageChange, handlePreviousPage, handleNextPage, setCurrentPage, pages, setItemsPerPage } = props;
+    const { itemsPerPage, currentPage, handlePreviousPage, handleNextPage, setCurrentPage, pages, setItemsPerPage } = props;
 
     return (
-        <div className="flex gap-x-2">
-            <Button onClick={handlePreviousPage} variant={'outline'} className="hover:bg-gray-50">
-                <ChevronLeft className="text-6xl" />
+        <div className="flex items-center gap-x-2">
+            <Button onClick={handlePreviousPage} variant={'outline'} size={'sm'} className="hover:bg-gray-50">
+                <ChevronLeft />
                 Previous
             </Button>
             {
@@ -21,15 +21,16 @@ export default function Pagination(props: UsePaginationProps) {
                         <Button
                             key={correctPage}
                             onClick={() => setCurrentPage(correctPage)}
-                            className={cn("bg-white hover:bg-primary_red hover:text-white text-primary_red border border-gray-200 shadow-none font-semibold", "", { "bg-primary_red text-white": correctPage === currentPage })}>{correctPage}
+                            size={'sm'}
+                            className={cn("bg-white py-2 px-4 hover:bg-primary_red hover:text-white text-primary_red border border-gray-200 shadow-none font-semibold", "", { "bg-primary_red text-white": correctPage === currentPage })}>{correctPage}
                         </Button>
                     );
                 })
             }
 
-            <Button onClick={handleNextPage} variant={'outline'} className="hover:bg-gray-50">
+            <Button onClick={handleNextPage} variant={'outline'} size={'sm'} className="hover:bg-gray-50">
                 Next
-                <ChevronRight className="text-6xl" />
+                <ChevronRight />
             </Button>
 
             <Select value={itemsPerPage.toString()} onValueChange={(value) => setItemsPerPage(parseInt(value))}>

@@ -18,7 +18,7 @@ import { useSearchParams } from 'next/navigation';
 import AddToCart from '../home/Explore/AddToCart';
 
 export default function Product({ product }: { product: ProductType; }) {
-    const { _id, images, brand, name, category, description, discount, cartQuantity, colors, variants, type } = product || {};
+    const { _id, images, brand, name, description, discount, cartQuantity, colors, variants, type } = product || {};
     const searchParams = useSearchParams();
     const [productQuantity, setProductQuantity] = useState(1);
     const [selectedColor, setSelectedColor] = useState<ColorType>(colors[0] || {});

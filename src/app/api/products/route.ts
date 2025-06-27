@@ -51,19 +51,6 @@ export async function GET(request: NextRequest) {
             queryObject.type = { $regex: type, $options: "i" };
         }
 
-        // Category filter (support for multiple categories)
-        // if (category) {
-        //     const categoryArray = category.split(','); // Split the category string into an array
-
-        //     // Fetch the ObjectIds for the categories
-        //     const categories = await CategoryModel.find({ name: { $in: categoryArray } }).select('_id');
-        //     const categoryIds = categories.map(cat => cat._id); // Get the ObjectIds of categories
-
-        //     // Add the category ObjectIds to the query
-        //     queryObject.category = { $in: categoryIds }; // Use $in to match any of the selected categories
-        // }
-
-        // If a specific product ID is provided
         if (_id) {
             const product = await ProductModel.findById(_id);
             if (product) return sendResponse(true, 'product sent successfully', 200, product);

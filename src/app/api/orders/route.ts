@@ -21,11 +21,29 @@ export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url);
         const email = searchParams.get('email');
+        const oid = searchParams.get('oid');
+
+        const count = searchParams.get('count');
+        const page = Number(searchParams.get('page')) || 1;
+        const limit = Number(searchParams.get('limit')) || 10;
+        const orderCount = await OrderModel.find({ email }).estimatedDocumentCount();
+        const skip = (page - 1) * limit;
+
+        if (count) {
+            return sendResponse(true, 'count sent successfully', 200, orderCount);
+        }
+
         if (email) {
-            const orders = await OrderModel.findOne({ user: email }).populate({ path: 'products' });
+            const orders = await OrderModel.find({ email }).skip(skip).limit(limit);
             return sendResponse(true, 'orders sent successfully', 200, orders);
         }
-        const orders = await OrderModel.find({}).populate({ path: 'products' }).populate('user');
+
+        if (oid) {
+            const order = await OrderModel.findOne({ orderId: oid });
+            return sendResponse(true, 'order sent successfully', 200, order);
+        }
+
+        const orders = await OrderModel.find({}).skip(skip).limit(limit);
         return sendResponse(true, 'orders sent successfully', 200, orders);
     } catch (error) {
         console.log("🚀 ~ POST ~ error: /api/orders - error sending orders", error);

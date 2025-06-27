@@ -49,8 +49,13 @@ export default function Page() {
                 ...form,
                 name: user?.name,
                 email: user?.email,
-                couponCode: appliedCoupon.code ?? '',
             };
+
+            // Only add couponCode if a coupon has been applied
+            if (appliedCoupon.code) {
+                newPaymentData.couponCode = appliedCoupon.code;
+            }
+
             const res = await initPayment(newPaymentData).unwrap();
 
             if (res.url) {

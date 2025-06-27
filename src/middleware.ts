@@ -2,7 +2,7 @@ export { default } from "next-auth/middleware";
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
-export const config = { matcher: ['/wishlists', '/cart', '/admin/:path*'] };
+export const config = { matcher: ['/wishlists', '/cart', '/orders', '/admin/:path*'] };
 export async function middleware(request: NextRequest) {
     console.log("running middleware");
     const token = await getToken({ req: request });

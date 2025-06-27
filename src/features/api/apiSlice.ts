@@ -5,7 +5,7 @@ export const apiSlice = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: `${appUrl}api`,
     }),
-    tagTypes: ['Wishlists', 'Brands'],
+    tagTypes: ['Wishlists', 'Brands', 'Orders'],
     endpoints: (builder) => ({
         signUp: builder.mutation({
             query: (data) => ({
@@ -63,6 +63,25 @@ export const apiSlice = createApi({
         getProductsCount: builder.query({
             query: () => `/products?count=true`
         }),
+        getOrderCount: builder.query({
+            query: () => `/orders?count=true`
+        }),
+        getOrders: builder.query({
+            query: (query) => `/orders?${query}`,
+            providesTags: ['Orders'],
+        }),
+        getOrder: builder.query({
+            query: (oid) => `/orders?oid=${oid}`,
+            providesTags: ['Orders'],
+        }),
+        updateOrderStatus: builder.mutation({
+            query: (data) => ({
+                url: '/order-status',
+                method: 'PUT',
+                body: data
+            }),
+            invalidatesTags: ['Orders'],
+        }),
         payment: builder.mutation({
             query: (data) => ({
                 url: '/payment/request',
@@ -109,6 +128,7 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: ['Brands'],
         }),
+
     }),
 
 });
@@ -126,11 +146,16 @@ export const {
     useGetProductsQuery,
     useSearchProductsQuery,
     useGetProductsCountQuery,
+    useGetOrdersQuery,
+    useGetOrderCountQuery,
+    useGetOrderQuery,
+    useLazyGetOrderQuery,
     usePaymentMutation,
     useUploadProductMutation,
     useGetBrandsQuery,
     useUploadBrandMutation,
     useGetBrandQuery,
     useUpdateBrandMutation,
-    useDeleteBrandMutation
+    useDeleteBrandMutation,
+    useUpdateOrderStatusMutation
 } = apiSlice;

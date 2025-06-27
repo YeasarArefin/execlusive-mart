@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
         const paymentData = await request.json() as PaymentData;
         const { name, email, address, city, phone, couponCode, postCode } = paymentData;
         let transactionId = generateTransactionId();
-        const { totalAmount } = await calculateTotalAmount(email, couponCode);
+        const { totalAmount } = await calculateTotalAmount(email, couponCode || undefined);
         console.log("🚀 ~ POST ~ totalAmount:", totalAmount);
 
         const data = dataConfig({

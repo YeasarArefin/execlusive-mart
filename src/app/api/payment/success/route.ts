@@ -1,9 +1,12 @@
 import calculateTotalAmount from "@/lib/calculateTotalAmount";
 import dbConnect from "@/lib/dbConnect";
+import orderConfirmationTemplate from "@/lib/email-templates/orderConfirmationTemplate";
+import generateOrderId from "@/lib/generateOrderId";
+import sendEmail from "@/lib/sendEmail";
 import sendResponse from "@/lib/sendResponse";
 import OrderModel from "@/models/Order";
 import UserModel from "@/models/User";
-import { PaymentData } from "@/types/types";
+import { Order, PaymentData } from "@/types/types";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -27,14 +30,16 @@ export async function POST(req: NextRequest) {
 
         const { totalAmount, appliedCoupon, products } = await calculateTotalAmount(email, couponCode);
 
-        const data = {
+        const data: Order = {
             email,
             name,
             address,
             city,
             postCode,
             phone,
-            products,
+            orderId: generateOrderId(),
+            status: 'pending',
+            products: products || [],
             transactionId,
             paidAmount: totalAmount,
             usedCoupon: appliedCoupon?.code || null,
@@ -59,7 +64,10 @@ export async function POST(req: NextRequest) {
         // Clear checkout data from cookies
         cookies().delete('checkout_data');
 
-        // Redirect to success page
+        const from = process.env.SMTP_EMAIL || '';
+        const subject = `Exclusive Mart Order#${data.orderId} Confirmed`;
+        await sendEmail(from, email, subject, orderConfirmationTemplate(data));
+
         return NextResponse.redirect(`http://localhost:3000/payment-success/${transactionId}`, 302);
     } catch (error) {
         console.error("Error creating order:", error);

@@ -36,6 +36,10 @@ const OrderSchema: Schema<Order> = new mongoose.Schema({
         type: String,
         default: '',
     },
+    orderId: {
+        type: String,
+        default: '',
+    },
     transactionId: {
         type: String,
         default: '',
@@ -43,6 +47,11 @@ const OrderSchema: Schema<Order> = new mongoose.Schema({
     discount: {
         type: Number,
         default: 0,
+    },
+    status: {
+        type: String,
+        enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
+        default: 'pending',
     }
 },
     {

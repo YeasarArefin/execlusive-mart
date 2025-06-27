@@ -9,7 +9,6 @@ import FilterAndSearch from "@/components/(admin)/products/FilterAndSearch";
 import GridView from "@/components/(admin)/products/GridView";
 import ListView from "@/components/(admin)/products/ListView";
 import { Card, CardContent } from "@/components/ui/card";
-import Pagination from "@/components/ui/pagination";
 import { useGetProductsCountQuery, useGetProductsQuery } from "@/features/api/apiSlice";
 import usePagination from "@/hooks/usePagination";
 import { Product as ProductType } from "@/types/types";
@@ -25,10 +24,10 @@ export default function ProductsPage() {
     const productCount = pdCount?.data || 0;
 
 
-    const { currentPage, handleItemPerPageChange, handleNextPage, handlePreviousPage, itemsPerPage, pages, setCurrentPage, setItemsPerPage } = usePagination({ totalItems: productCount });
+    const { currentPage, handleItemPerPageChange, handleNextPage, handlePreviousPage, itemsPerPage, pages, setCurrentPage, setItemsPerPage, PaginationComponent } = usePagination({ totalItems: productCount });
 
 
-    const [query, setQuery] = useState(`limit=${itemsPerPage}&type=${filterType}&page=${currentPage}&limit=${itemsPerPage}`);
+    const [query, setQuery] = useState(`type=${filterType}&page=${currentPage}&limit=${itemsPerPage}`);
     const { data: response, isError, isLoading, isSuccess, refetch } = useGetProductsQuery(query, {});
     const products = response?.data as ProductType[] || [];
 
@@ -162,7 +161,8 @@ export default function ProductsPage() {
             {isSuccess && <div className="flex justify-center my-20">
                 <div className="flex flex-col">
 
-                    <Pagination currentPage={currentPage} handleItemPerPageChange={handleItemPerPageChange} handleNextPage={handleNextPage} handlePreviousPage={handlePreviousPage} itemsPerPage={itemsPerPage} pages={pages} setCurrentPage={setCurrentPage} setItemsPerPage={setItemsPerPage} totalItems={productCount} />
+                    {/* <Pagination currentPage={currentPage} handleItemPerPageChange={handleItemPerPageChange} handleNextPage={handleNextPage} handlePreviousPage={handlePreviousPage} itemsPerPage={itemsPerPage} pages={pages} setCurrentPage={setCurrentPage} setItemsPerPage={setItemsPerPage} totalItems={productCount} /> */}
+                    <PaginationComponent />
 
                 </div>
             </div>}

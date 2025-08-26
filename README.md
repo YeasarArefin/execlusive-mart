@@ -1,160 +1,259 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Execlusive Mart
 
-## Getting Started
+Execlusive Mart is a full-stack e-commerce application built with Next.js, TypeScript, and Tailwind CSS. It provides a complete online shopping experience with features for both customers and administrators.
 
-First, run the development server:
+[![Build Status](https://img.shields.io/travis/com/your-username/your-repo.svg)](https://travis-ci.com/your-username/your-repo)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/version-0.1.0-brightgreen.svg)](https://semver.org)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Configuration](#configuration)
+- [API Endpoints](#api-endpoints)
+- [Project Structure](#project-structure)
+- [Screenshots](#screenshots)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+
+## Features
+
+-   **User Authentication:** Secure sign-up, sign-in, and session management.
+-   **Product Management:** Admins can add, edit, and delete products.
+-   **Shopping Cart:** Users can add products to their cart and manage quantities.
+-   **Checkout Process:** A seamless checkout experience with order summary and payment integration.
+-   **Order Management:** Users can view their order history, and admins can manage all orders.
+-   **Search and Filtering:** Users can search for products and filter them by category, brand, and price.
+-   **Wishlist:** Users can add products to their wishlist for future purchase.
+-   **Admin Dashboard:** A comprehensive dashboard for managing products, orders, and users.
+-   **Email Notifications:** Automated email notifications for order confirmation, status updates, and more.
+-   **Responsive Design:** A mobile-friendly design that works on all devices.
+
+## Installation
+
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/your-username/execlusive-mart.git
+    ```
+2.  **Navigate to the project directory:**
+    ```bash
+    cd execlusive-mart
+    ```
+3.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
+4.  **Set up environment variables:**
+    Create a `.env.local` file in the root of the project and add the following variables:
+    ```env
+    # MongoDB Connection URI
+    MONGODB_URI=your_mongodb_connection_string
+
+    # NextAuth.js Configuration
+    NEXTAUTH_SECRET=your_nextauth_secret
+    NEXTAUTH_URL=http://localhost:3000
+
+    # Email Configuration (Nodemailer)
+    EMAIL_HOST=your_email_host
+    EMAIL_PORT=your_email_port
+    EMAIL_USER=your_email_user
+    EMAIL_PASS=your_email_password
+    ```
+5.  **Run the development server:**
+    ```bash
+    npm run dev
+    ```
+    The application will be available at `http://localhost:3000`.
+
+## Usage
+
+-   **Admin:** Access the admin dashboard at `/admin` to manage products, orders, and users.
+-   **User:** Browse products, add them to the cart, and proceed to checkout.
+
+## Configuration
+
+-   **Tailwind CSS:** The Tailwind CSS configuration is located in `tailwind.config.ts`. You can customize the theme, colors, and other design tokens in this file.
+-   **Next.js:** The Next.js configuration is located in `next.config.mjs`. You can configure server-side rendering, routing, and other Next.js features in this file.
+
+## API Endpoints
+
+The API endpoints are located in `src/app/api`. Each endpoint is responsible for a specific resource:
+
+-   `/api/auth`: User authentication
+-   `/api/products`: Product management
+-   `/api/orders`: Order management
+-   `/api/cart`: Shopping cart management
+-   `/api/wishlists`: Wishlist management
+-   ...and more
+
+## Project Structure
+
+```
+.
+├── .eslintrc.json
+├── .gitignore
+├── components.json
+├── next.config.mjs
+├── package-lock.json
+├── package.json
+├── postcss.config.mjs
+├── README.md
+├── tailwind.config.ts
+├── tsconfig.json
+├── type.html
+├── .git/
+├── .vscode/
+│   └── settings.json
+├── emails/
+│   ├── emailVerificationTemplate.tsx
+│   └── statusUpdateTemplate.tsx
+├── public/
+│   ├── AddToCart.gif
+│   ├── banner.png
+│   ├── JBL.png
+│   ├── next.svg
+│   ├── signin_signup_image.jpg
+│   └── vercel.svg
+└── src/
+    ├── middleware.ts
+    ├── app/
+    │   ├── favicon.ico
+    │   ├── globals.css
+    │   ├── layout.tsx
+    │   ├── not-found.tsx
+    │   ├── (app)/
+    │   │   ├── layout.tsx
+    │   │   ├── page.tsx
+    │   │   ├── (auth)/
+    │   │   │   ├── sign-in/
+    │   │   │   ├── sign-up/
+    │   │   │   └── verify/
+    │   │   └── (pages)/
+    │   │       ├── cart/
+    │   │       ├── checkout/
+    │   │       ├── orders/
+    │   │       └── ...
+    │   ├── admin/
+    │   │   ├── layout.tsx
+    │   │   ├── brands/
+    │   │   ├── dashboard/
+    │   │   ├── orders/
+    │   │   └── products/
+    │   ├── api/
+    │   │   ├── auth/
+    │   │   ├── banners/
+    │   │   ├── brands/
+    │   │   ├── cart/
+    │   │   ├── categories/
+    │   │   ├── coupons/
+    │   │   ├── order-status/
+    │   │   ├── orders/
+    │   │   ├── payment/
+    │   │   ├── products/
+    │   │   ├── signup/
+    │   │   ├── verify-code/
+    │   │   └── wishlists/
+    │   ├── dashboard/
+    │   │   └── page.tsx
+    │   └── unauthorized/
+    │       └── page.tsx
+    ├── components/
+    │   ├── app-sidebar.tsx
+    │   ├── search-form.tsx
+    │   ├── version-switcher.tsx
+    │   ├── (admin)/
+    │   │   ├── brands/
+    │   │   ├── orders/
+    │   │   ├── products/
+    │   │   └── ui/
+    │   ├── auth/
+    │   │   ├── sign-in/
+    │   │   └── sign-up/
+    │   ├── cart/
+    │   │   ├── cart-calculation.tsx
+    │   │   ├── cart-quantity-controller.tsx
+    │   │   ├── cart.tsx
+    │   │   ├── empty-cart.tsx
+    │   │   └── single-cart.tsx
+    │   ├── home/
+    │   │   ├── Footer.tsx
+    │   │   ├── Heading.tsx
+    │   │   ├── HeroSection.tsx
+    │   │   ├── HeroSlider.tsx
+    │   │   ├── Navbar.tsx
+    │   │   ├── Navitems.tsx
+    │   │   ├── NavSearch.tsx
+    │   │   ├── TopNotification.tsx
+    │   │   ├── Explore/
+    │   │   ├── Features/
+    │   │   └── Promotion/
+    │   ├── orders/
+    │   │   ├── Orders.tsx
+    │   │   ├── SingleOrder.tsx
+    │   │   └── SingleOrderSkeleton.tsx
+    │   ├── product/
+    │   │   ├── product-quantity-controller.tsx
+    │   │   ├── Product.tsx
+    │   │   └── ProductLoader.tsx
+    │   ├── ui/
+    │   │   ├── ...
+    │   └── wishlists/
+    │       ├── wishlist.tsx
+    │       ├── wishlistLoader.tsx
+    │       └── wishlists.tsx
+    ├── constants/
+    │   └── appUrl.ts
+    ├── features/
+    │   ├── api/
+    │   │   └── apiSlice.ts
+    │   ├── cart/
+    │   │   └── cartSlice.ts
+    │   └── wishlists/
+    │       └── wishlistsSlice.ts
+    ├── hooks/
+    │   ├── use-mobile.ts
+    │   ├── useDebounce.ts
+    │   ├── useImageUpload.ts
+    │   └── usePagination.tsx
+    ├── lib/
+    │   ├── ...
+    ├── models/
+    │   ├── ...
+    ├── providers/
+    │   ├── AuthProvider.tsx
+    │   └── StoreProvider.tsx
+    ├── schemas/
+    │   ├── ...
+    ├── store/
+    │   └── store.ts
+    └── types/
+        ├── ...
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Screenshots
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Home Page | Sign In |
+| :---: | :---: |
+| ![Home Page](public/banner.png) | ![Sign In](public/signin_signup_image.jpg) |
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Contributing
 
-## Learn More
+Contributions are welcome! Please follow these steps:
 
-To learn more about Next.js, take a look at the following resources:
+1.  Fork the repository.
+2.  Create a new branch (`git checkout -b feature/your-feature-name`).
+3.  Make your changes.
+4.  Commit your changes (`git commit -m 'Add some feature'`).
+5.  Push to the branch (`git push origin feature/your-feature-name`).
+6.  Open a pull request.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## License
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-## Deploy on Vercel
+## Contact
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
-
-product page :
-'use client';
-import Product from "@/components/home/Explore/Product";
-import { Input } from "@/components/ui/input";
-import { useGetProductsQuery } from "@/features/api/apiSlice";
-import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { LuSearch } from "react-icons/lu";
-import { useDebounceCallback } from 'usehooks-ts';
-
-export default function Page() {
-const searchParams = useSearchParams();
-const [brandFilters, setBrandFilters] = useState<string[]>([]);
-const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
-const [name, setName] = useState<string>('');
-
-    const handleBrandBox = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, checked } = e.target;
-        if (checked) {
-            setBrandFilters((prev) => [...prev, name]);
-        } else {
-            setBrandFilters((prev) => prev.filter((filter) => filter !== name));
-        }
-    };
-
-    const handleCategoryBox = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, checked } = e.target;
-        if (checked) {
-            setCategoryFilters((prev) => [...prev, name]);
-        } else {
-            setCategoryFilters((prev) => prev.filter((filter) => filter !== name));
-        }
-    };
-
-    const debounced = useDebounceCallback(setName, 500);
-
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const name = e.target.value;
-        debounced(name);
-    };
-
-    useEffect(() => {
-        const brands = searchParams.get('brand');
-        const categories = searchParams.get('category');
-        const searchTerm = searchParams.get('name');
-
-        if (brands) {
-            setBrandFilters(brands.split(','));
-        }
-        if (categories) {
-            setCategoryFilters(categories.split(','));
-        }
-        if (searchTerm) {
-            setName(searchTerm);
-        }
-    }, [searchParams]);
-
-    // Build query string for the RTK query
-    const brandQuery = brandFilters.length > 0 ? `brand=${brandFilters.join(',')}&` : '';
-    const categoryQuery = categoryFilters.length > 0 ? `category=${categoryFilters.join(',')}&` : '';
-    let query = [brandQuery, categoryQuery].filter(Boolean).join('&');
-
-    if (name.length > 0) {
-        query = query ? `${query}&name=${name}` : `name=${name}`;
-    }
-
-    query += `&page=1&limit=9`;
-
-    const { data: products, isLoading } = useGetProductsQuery(query);
-
-    return (
-        <section>
-            <div>
-                <div className="grid grid-cols-4 gap-5">
-                    <div className="col-span-1">
-                        <div className="mb-4">
-                            <div className="relative">
-                                <LuSearch className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                <Input
-                                    type="search"
-                                    placeholder="Search products..."
-                                    className="w-full appearance-none bg-background pl-8 shadow-none"
-                                    onChange={handleSearch}
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <div>Brands</div>
-                            <div>
-                                <div><input type="checkbox" checked={brandFilters.includes('apple')} className="mr-2" onChange={handleBrandBox} name="apple" />Apple</div>
-                                <div><input type="checkbox" checked={brandFilters.includes('zotac')} className="mr-2" onChange={handleBrandBox} name="zotac" />Zotac</div>
-                                <div><input type="checkbox" checked={brandFilters.includes('amd')} className="mr-2" onChange={handleBrandBox} name="amd" />Amd</div>
-                                <div><input type="checkbox" checked={brandFilters.includes('intel')} className="mr-2" onChange={handleBrandBox} name="intel" />Intel</div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div>Categories</div>
-                            <div>
-                                <div><input type="checkbox" checked={categoryFilters.includes('phone')} className="mr-2" onChange={handleCategoryBox} name="phone" />Phone</div>
-                                <div><input type="checkbox" checked={categoryFilters.includes('gadget')} className="mr-2" onChange={handleCategoryBox} name="gadget" />Gadget</div>
-                                <div><input type="checkbox" checked={categoryFilters.includes('laptop')} className="mr-2" onChange={handleCategoryBox} name="laptop" />Laptop</div>
-                                <div><input type="checkbox" checked={categoryFilters.includes('accessory')} className="mr-2" onChange={handleCategoryBox} name="accessory" />Accessory</div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div className="col-span-3">
-                        <div className="grid grid-cols-3 gap-5">
-                            {isLoading && <div>Loading...</div>}
-                            {products?.data.length == 0 && <h1>No Items</h1>}
-                            {products?.data.length > 0 && products.data.map(pd => <Product key={pd._id} product={pd} />)}
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
-
-}
+If you have any questions or suggestions, please feel free to contact me at [your-email@example.com](mailto:your-email@example.com).

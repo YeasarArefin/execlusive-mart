@@ -71,7 +71,7 @@ export default function DashboardContent() {
                 setLoading(true);
             }
 
-            const response = await fetch('http://localhost:3000/api/dashboard', {
+            const response = await fetch('https://exclusive-mart.vercel.app/api/dashboard', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Plus, Upload } from 'lucide-react';
-import Image from "next/image";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -133,11 +132,10 @@ export default function AddBanner() {
                                             <FormLabel>Preview</FormLabel>
                                             <div className="border rounded-lg p-3 bg-muted/20">
                                                 <div className="relative w-full h-40 bg-muted rounded overflow-hidden">
-                                                    <Image
+                                                    <img
                                                         src={watchedUrl || "/placeholder.svg"}
                                                         alt="Banner preview"
-                                                        fill
-                                                        className="object-cover transition-opacity duration-200"
+                                                        className="w-full h-full object-cover transition-opacity duration-200"
                                                         onLoad={(e) => {
                                                             const target = e.target as HTMLImageElement;
                                                             target.style.opacity = "1";

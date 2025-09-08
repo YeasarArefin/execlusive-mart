@@ -44,7 +44,8 @@ export async function POST(req: NextRequest) {
             transactionId,
             paidAmount: totalAmount,
             usedCoupon: appliedCoupon?.code || null,
-            discount: appliedCoupon?.discount || 0
+            discount: appliedCoupon?.discount || 0,
+            createdAt: new Date()
         };
 
         const user = await UserModel.findOne({ email });

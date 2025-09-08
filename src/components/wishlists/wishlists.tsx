@@ -29,7 +29,7 @@ export default function Wishlists() {
             <div className="mb-10">
                 <Heading name="Wishlists" title="Manage your wishlists here" />
             </div>
-            <div className="flex flex-col gap-y-5 w-full lg:w-2/5">
+            <div className="flex flex-col gap-y-5 w-full lg:w-3/6">
                 {content}
             </div>
         </section>

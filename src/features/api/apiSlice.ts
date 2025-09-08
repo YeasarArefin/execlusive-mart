@@ -128,7 +128,23 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: ['Brands'],
         }),
-
+        getBanners: builder.query({
+            query: () => "/banners",
+        }),
+        uploadBanner: builder.mutation({
+            query: (data) => ({
+                url: '/banners',
+                method: 'POST',
+                body: data
+            }),
+        }),
+        deleteBanner: builder.mutation({
+            query: (id) => ({
+                url: '/banners',
+                method: 'DELETE',
+                body: { id },
+            }),
+        }),
     }),
 
 });
@@ -157,5 +173,8 @@ export const {
     useGetBrandQuery,
     useUpdateBrandMutation,
     useDeleteBrandMutation,
-    useUpdateOrderStatusMutation
+    useUpdateOrderStatusMutation,
+    useGetBannersQuery,
+    useUploadBannerMutation,
+    useDeleteBannerMutation,
 } = apiSlice;

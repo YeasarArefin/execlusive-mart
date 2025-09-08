@@ -17,6 +17,7 @@ const links = [
   { name: "Products", to: "/admin/products", icon: Package },
   { name: "Brands", to: "/admin/brands", icon: Tag },
   { name: "Orders", to: "/admin/orders", icon: Package2 },
+  { name: "Banners", to: "/admin/banners", icon: Package2 },
 ];
 
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {

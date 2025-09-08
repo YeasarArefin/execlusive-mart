@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { ArrowRightIcon } from "lucide-react";
 import Link from "next/link";
 import Heading from "../Heading";
 import Products from "./Products";
@@ -14,7 +15,9 @@ export default function Todays() {
             </div>
             <div className="flex justify-center">
                 <Link href={'/products'}>
-                    <Button size="lg" className="bg-primary_red">View All Products</Button>
+                    <Button effect="expandIcon" icon={ArrowRightIcon} iconPlacement="right" className="bg-primary_red">
+                        See All
+                    </Button>
                 </Link>
             </div>
         </section>

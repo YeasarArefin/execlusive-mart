@@ -118,6 +118,8 @@ export type Order = {
     orderId?: string;
     discount?: number;
     status?: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+    createdAt: Date,
+
 };
 
 export type Review = {

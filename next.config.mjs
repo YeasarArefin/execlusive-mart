@@ -10,7 +10,32 @@ if (process.env.NODE_ENV === 'production') {
 
 const nextConfig = {
     images: {
-        domains: ['adminapi.applegadgetsbd.com', 'fdn2.gsmarena.com', 'i.ibb.co', 'upload.wikimedia.org', 'static-00.iconduck.com']
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'adminapi.applegadgetsbd.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'fdn2.gsmarena.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'i.ibb.co',
+            },
+            {
+                protocol: 'https',
+                hostname: 'i.ibb.co.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'upload.wikimedia.org',
+            },
+            {
+                protocol: 'https',
+                hostname: 'static-00.iconduck.com',
+            },
+        ],
     },
     async headers() {
         return [
